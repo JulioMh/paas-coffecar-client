@@ -3,7 +3,10 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Home from './containers/Home/Home';
 import Trip from './containers/TripRoot/TripRoot';
 import Error from './components/Error/Error';
-import Navigation from './components/Navigation/NavigationItems/NavigationItems'
+import Navigation from './components/Navigation/NavigationItems/NavigationItems';
+import 'primereact/resources/themes/nova-light/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 
 function App() {
   return (
