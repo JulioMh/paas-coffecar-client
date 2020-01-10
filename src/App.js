@@ -1,10 +1,15 @@
 import React from 'react';
-import Button from 'react-bootstrap/Button';
+import TripRoot from './containers/TripRoot/TripRoot';
 
-function App() {
-  return (
-    <Button variant="success">Success</Button>
+
+
+class App extends React.Component {
+
+  render() {
+    return (
+      <TripRoot/>
     );
+  }
 };
 
 export default App;
