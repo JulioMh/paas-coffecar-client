@@ -1,22 +1,22 @@
 import React, { Component } from 'react';
 import { withGoogleMap, GoogleMap } from 'react-google-maps';
 class Map extends Component {
-   render() {
-   const GoogleMapExample = withGoogleMap(props => (
+  render() {
+    const GoogleMapExample = withGoogleMap(props => (
       <GoogleMap
-        defaultCenter = { { lat: 40.756795, lng: -73.954298 } }
-        defaultZoom = { 13 }
+        defaultCenter={{ lat: 36.7585406, lng: -4.3971722 }}
+        defaultZoom={13}
       >
       </GoogleMap>
-   ));
-   return(
+    ));
+    return (
       <div>
-        <GoogleMapExample
-          containerElement={ <div style={{ height: `500px`, width: '500px' }} /> }
-          mapElement={ <div style={{ height: `100%` }} /> }
+        <Map
+          containerElement={<div style={{ height: `500px`, width: '500px' }} />}
+          mapElement={<div style={{ height: `100%` }} />}
         />
       </div>
-   );
-   }
+    );
+  }
 };
 export default Map;

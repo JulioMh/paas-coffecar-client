@@ -7,6 +7,8 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
+import { GMap } from 'primereact/gmap';
+
 
 
 
@@ -147,97 +149,109 @@ class TripRoot extends React.Component {
     }
 
     render() {
+        const options = {
+            center: { lat: 36.72016, lng: -4.42034 },
+            zoom: 14
+        };
         return (
-
-            <Card style={{ width: '40%', margin: '70px', marginTop: '70px', boxShadow: "5px 5px 5px grey" }}>
+            <Card style={{ width: '50%', margin: 'auto', marginTop: '70px', boxShadow: "5px 5px 5px grey" }}>
                 <Card.Body>
                     <Card.Title>{this.props.item ? 'Información del viaje' : '¡Publica tu viaje ahora!'}</Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">Que no se te olviden las llaves :P</Card.Subtitle>
                     <Form onSubmit={this.props.item ? this.submitFormEdit : this.submitFormAdd}>
-                        <FormGroup>
-                            <Label>Titulo</Label>
-                            <Input
-                                type="text"
-                                name="title"
-                                id="title"
-                                plaintext={this.state.writable}
-                                readOnly={this.state.writable}
-                                onChange={this.onChange}
-                                value={this.state.title === null ? '' : this.state.title} />
-                        </FormGroup>
-                        <Label>Asientos</Label>
-                        <Form.Row>
-                            <FormGroup as={Col}>
-                                <Input
-                                    type="range"
-                                    min="1"
-                                    max="14"
-                                    name="seats"
-                                    id="seats"
-                                    plaintext={this.state.writable}
-                                    readOnly={this.state.writable}
-                                    onChange={this.onChange}
-                                    value={this.state.seats === null ? '' : this.state.seats} />
-                            </FormGroup>
-                            <FormGroup as={Col} md="auto">
-                                <Input
-                                    style={{ width: "50px" }}
-                                    type="text"
-                                    name="seats"
-                                    id="seats"
-                                    plaintext={this.state.writable}
-                                    readOnly={this.state.writable}
-                                    onChange={this.onChange}
-                                    value={this.state.seats === null ? '' : this.state.seats} />
-                            </FormGroup>
-                        </Form.Row>
-
-                        <Form.Row>
-                            <FormGroup as={Col}>
-                                <Label>Fecha de salida</Label>
-                                <Input
-                                    type="datetime-local"
-                                    name="departureTime"
-                                    id="departureTime"
-                                    plaintext={this.state.writable}
-                                    readOnly={this.state.writable}
-                                    onChange={this.onChange}
-                                    value={this.state.departureTime === null ? '' : this.state.departureTime} />
-                            </FormGroup>
-                            <FormGroup as={Col}>
-                                <Label>Fecha de llegada</Label>
-                                <Input
-                                    type="datetime-local"
-                                    name="arrivalDate"
-                                    id="arrivalDate"
-                                    plaintext={this.state.writable}
-                                    readOnly={this.state.writable}
-                                    onChange={this.onChange}
-                                    value={this.state.arrivalDate === null ? '' : this.state.arrivalDate} />
-                            </FormGroup>
-                        </Form.Row>
-
-                        <FormGroup>
-                            <Label>Descripción</Label>
-                            <Input
-                                as="textarea"
-                                name="description"
-                                id="description"
-                                row="3"
-                                plaintext={this.state.writable}
-                                readOnly={this.state.writable}
-                                onChange={this.onChange}
-                                value={this.state.description === null ? '' : this.state.description} />
-                        </FormGroup>
+                        <Row>
+                            <Col>
+                                <FormGroup>
+                                    <Label>Titulo</Label>
+                                    <Input
+                                        type="text"
+                                        name="title"
+                                        id="title"
+                                        plaintext={this.state.writable}
+                                        readOnly={this.state.writable}
+                                        onChange={this.onChange}
+                                        value={this.state.title === null ? '' : this.state.title} />
+                                </FormGroup>
+                                <Label>Asientos</Label>
+                                <Form.Row>
+                                    <FormGroup as={Col}>
+                                        <Input
+                                            type="range"
+                                            min="1"
+                                            max="14"
+                                            name="seats"
+                                            id="seats"
+                                            plaintext={this.state.writable}
+                                            readOnly={this.state.writable}
+                                            onChange={this.onChange}
+                                            value={this.state.seats === null ? '' : this.state.seats} />
+                                    </FormGroup>
+                                    <FormGroup as={Col} md="auto">
+                                        <Input
+                                            style={{ width: "50px" }}
+                                            type="text"
+                                            name="seats"
+                                            id="seats"
+                                            plaintext={this.state.writable}
+                                            readOnly={this.state.writable}
+                                            onChange={this.onChange}
+                                            value={this.state.seats === null ? '' : this.state.seats} />
+                                    </FormGroup>
+                                </Form.Row>
+                                <Form.Row>
+                                    <FormGroup as={Col}>
+                                        <Label>Fecha de salida</Label>
+                                        <Input
+                                            type="datetime-local"
+                                            name="departureTime"
+                                            id="departureTime"
+                                            plaintext={this.state.writable}
+                                            readOnly={this.state.writable}
+                                            onChange={this.onChange}
+                                            value={this.state.departureTime === null ? '' : this.state.departureTime} />
+                                    </FormGroup>
+                                    <FormGroup as={Col}>
+                                        <Label>Fecha de llegada</Label>
+                                        <Input
+                                            type="datetime-local"
+                                            name="arrivalDate"
+                                            id="arrivalDate"
+                                            plaintext={this.state.writable}
+                                            readOnly={this.state.writable}
+                                            onChange={this.onChange}
+                                            value={this.state.arrivalDate === null ? '' : this.state.arrivalDate} />
+                                    </FormGroup>
+                                </Form.Row>
+                                <FormGroup>
+                                    <Label>Descripción</Label>
+                                    <Input
+                                        as="textarea"
+                                        name="description"
+                                        id="description"
+                                        row="3"
+                                        plaintext={this.state.writable}
+                                        readOnly={this.state.writable}
+                                        onChange={this.onChange}
+                                        value={this.state.description === null ? '' : this.state.description} />
+                                </FormGroup>
+                            </Col>
+                            <Col>
+                                <Card style={{ height: "97%", width: '100%', margin: 'auto' }}>
+                                    <Card.Body>
+                                        <Card.Title>Desde...</Card.Title>
+                                        <GMap options={options} style={{ width: '100%', minHeight: "365px" }} />
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        </Row>
                         <Row className="justify-content-md-center">
                             <Col md="auto">
-                                <Button className="justify-content-md-center" style={{ marginLeft: "auto" }} type="submit" >Confirmar</Button>
+                                <Button variant="dark" style={{ marginLeft: "auto" }} type="submit" >Confirmar</Button>
                             </Col>
                         </Row>
                     </Form>
                 </Card.Body>
             </Card >
-
         );
     }
 }

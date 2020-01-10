@@ -8,25 +8,16 @@ import 'primereact/resources/themes/nova-light/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 
-import Map from './Map'
-import {GMap} from 'primereact/gmap';
-
 
 
 class App extends Component {
   render() {
-    const options = {
-      center: {lat: 36.890257, lng: 30.707417},
-      zoom: 12
-  };
     return (
       <BrowserRouter>
         <div>
           <header>
             <Navigation />
           </header>
-          <Map></Map>
-          <GMap options={options} style={{width: '100%', minHeight: '320px'}} />
           <Switch>
             <Route path="/" component={Home} exact />
             <Route path="/trip/:id" component={Trip} />

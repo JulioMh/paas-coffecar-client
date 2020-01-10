@@ -10,8 +10,8 @@ const NavigationItems = () => {
                 <img
                     alt=""
                     src={CoffeeCarLogo}
-                    width="30"
-                    height="30"
+                    width="75px"
+                    height="75px"
                     className="d-inline-block align-top"
                 />{' '}
             </Navbar.Brand>
