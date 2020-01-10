@@ -148,6 +148,14 @@ class TripRoot extends React.Component {
         }
     }
 
+    handleMapClick = (ref,map,ev) => {
+        const location = ev.latLng;
+        this.setState(prevState => ({
+            
+        }))
+    }
+
+
     render() {
         const options = {
             center: { lat: 36.72016, lng: -4.42034 },
