@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import GoogleLogin from 'react-google-login';
 import { Redirect } from 'react-router-dom';
 import classes from './Welcome.module.css';
-import { Image, Col, Row, Container } from 'react-bootstrap';
+import { Image, Card } from 'react-bootstrap';
 import CoffeeCarLogo from '../../components/Logo/CoffeeCarLogo.png'
 
 
@@ -35,10 +35,11 @@ class Welcome extends Component {
                                 fetch("https://" + postData.email)
                                     .then((result) => {
                                         console.log("creado");
-                                        this.createOrKeepUser(postData);
+                                        return result.json();
                                     })
                             }
                         });
+
                 }
                 return response.json();
             })
@@ -77,19 +78,18 @@ class Welcome extends Component {
         }
 
         return (
-
-            <div className={classes.GoogleLogIn}>
-                <div className={classes.center}>
-                    <div className={classes.logo}>
+            <div className={classes.contenedor}>
+                <Card style={{ width: '100%', margin: 'auto', marginTop: '70px', boxShadow: "5px 5px 5px grey" }}>
+                    <div className={classes.center}>
                         <h1>Welcome to CoffeeCar</h1>
                         <Image src={CoffeeCarLogo} />
+                        <GoogleLogin
+                            clientId="614940743476-2hc47higdlfhia4v8d6o4tstjpuc5kd0.apps.googleusercontent.com"
+                            buttonText="Login with Google"
+                            onSuccess={responseGoogle}
+                            onFailure={responseGoogle} />
                     </div>
-                    <GoogleLogin
-                        clientId="614940743476-2hc47higdlfhia4v8d6o4tstjpuc5kd0.apps.googleusercontent.com"
-                        buttonText="Login with Google"
-                        onSuccess={responseGoogle}
-                        onFailure={responseGoogle} />
-                </div>
+                </Card>
             </div>
 
         );

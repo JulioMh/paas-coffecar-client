@@ -1,36 +1,5 @@
-.GoogleLogIn {
-    width: 100%;
-    min-height: 100vh;
-    text-align: center;
-    justify-content: center;
-    margin-top: 50px;
-    margin-bottom: 50px;
-    background-color: rgba(27, 27, 27, 0.459);
-    border-radius: 1cm;
-}
-
-body {
-    margin-left: 10%;
-    margin-right: 10%;
-    background-color: #756349;
-}
-
-.logo {
-    vertical-align: middle;
-    text-align: center;
-    align-content: center;
-    margin-bottom: 10px;
-}
-
 img {
     width: 200px;
-}
-
-h1 {
-    text-align: center;
-    vertical-align: middle;
-    font: bold;
-    color: rgb(233, 233, 217);
 }
 
 .center {
@@ -39,5 +8,18 @@ h1 {
     justify-content: center;
     align-items: center;
     text-align: center;
-    min-height: 100vh;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.contenedor {
+    width: 500px;
+    height: 500px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -250px;
+    /* height/2 = 500px / 2 */
+    margin-left: -250px;
+    /* width/2 = 500px / 2 */
 }
