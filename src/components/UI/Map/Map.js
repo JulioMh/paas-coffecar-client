@@ -90,7 +90,11 @@ const map = props => {
     };
 
     return (
-        <GMap onOverlayDragStart={props.onOverlayDragStart} onMapClick={props.onMapClick} onOverlayDragEnd={props.onOverlayDragEnd} overlays={props.overlays} options={options} style={{ width: '100%', minHeight: '320px' }} />
+        <GMap 
+            onMapClick={props.onMapClick} 
+            onOverlayDragEnd={props.onOverlayDragEnd} 
+            overlays={props.overlays} options={options} 
+            style={{ width: '100%', minHeight: '320px' }} />
     )
 };
 

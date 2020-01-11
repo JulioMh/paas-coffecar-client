@@ -163,6 +163,7 @@ class TripRoot extends React.Component {
                 driver,
                 passengers
             } = this.props.item
+                        
             this.setState({
                 id,
                 title,
@@ -272,7 +273,6 @@ class TripRoot extends React.Component {
                                             <Card.Subtitle className="mb-2 text-muted">{this.state.mapSubtitle}</Card.Subtitle>
                                             <Map 
                                                 onOverlayDragEnd={this.onOverlayDragEnd} 
-                                                onOverlayDragStart={this.onOverlayDragStart} 
                                                 onMapClick={this.onMapClick} 
                                                 overlays={this.state.overlays} 
                                                 style={{ width: '100%', minHeight: "365px" }} />
