@@ -162,7 +162,7 @@ class TripRoot extends React.Component {
             zoom: 14
         };
         return (
-            <Card style={{ width: '50%', margin: 'auto', marginTop: '70px', boxShadow: "5px 5px 5px grey" }}>
+            <Card style={{ width: '50%', margin: 'auto', marginTop: '60px', marginBottom: '60px',boxShadow: "5px 5px 5px grey" }}>
                 <Card.Body>
                     <Card.Title>{this.props.item ? 'Información del viaje' : '¡Publica tu viaje ahora!'}</Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">Que no se te olviden las llaves :P</Card.Subtitle>
