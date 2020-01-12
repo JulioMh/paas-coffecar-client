@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+
 import DataViewDemo from './prueba/prueba';
+
+
 import Home from './containers/Home/Home';
 import Trip from './containers/TripRoot/TripRoot';
 import Error from './components/Error/Error';
