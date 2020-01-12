@@ -22,7 +22,7 @@ class Trips extends Component {
             name: '',
             comment: ''
         };
-        this.serviceTrips = new ServiceTrips();
+       
         this.itemTemplate = this.itemTemplate.bind(this);
         this.onSortChange = this.onSortChange.bind(this);
     }
