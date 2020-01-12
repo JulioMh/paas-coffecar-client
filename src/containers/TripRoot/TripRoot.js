@@ -5,6 +5,7 @@ import Label from 'react-bootstrap/FormLabel';
 import Input from 'react-bootstrap/FormControl';
 import FormGroup from 'react-bootstrap/FormGroup';
 import { FileUpload } from 'primereact/fileupload';
+import Spinner from 'react-bootstrap/Spinner';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -19,6 +20,7 @@ class TripRoot extends React.Component {
         overlays: null,
         mapTitle: "Desde...",
         mapSubtitle: "Haz click para marcar tu punto de salida",
+        postingData: false,
         id: 0,
         title: '',
         departureTime: '',
@@ -111,7 +113,7 @@ class TripRoot extends React.Component {
 
     handleSubmit = e => {
         e.preventDefault();
-        console.log(this.state);
+        this.setState(prevState => ({ postingData: !prevState.postingData }));
         fetch('https://coffeecar.herokuapp.com/api/announces', {
             method: (this.props.item ? 'put' : 'post'),
             headers: {
@@ -132,16 +134,7 @@ class TripRoot extends React.Component {
                 passengers: this.state.passengers
             })
         })
-            .then(response => response.json())
-            .then(item => {
-                if (Array.isArray(item)) {
-                    console.log(item[0])
-                    this.props.updateState(item[0])
-                    this.props.toggle()
-                } else {
-                    console.log('failure')
-                }
-            })
+            .then(this.setState(prevState => ({ postingData: !prevState.postingData })))
             .catch(err => console.log(err))
     }
 
@@ -201,6 +194,19 @@ class TripRoot extends React.Component {
     }
 
     render() {
+        let button = this.state.postingData ?
+            <Button variant="dark" disabled>
+                <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                />
+            </Button>
+            : 
+            <Button variant="dark" style={{ marginLeft: "auto" }} type="submit" >Confirmar</Button>
+            ;
         return (
             <Card style={{ width: '75%', margin: 'auto', marginTop: '50px', boxShadow: "5px 5px 5px grey" }}>
                 <Card.Body>
@@ -222,9 +228,10 @@ class TripRoot extends React.Component {
                                 </FormGroup>
                                 <FileUpload
                                     mode="basic"
-                                    chooseLabel="¿Alguna imagen del coche?"
+                                    chooseLabel={this.state.imgLink === '' ? "¿Alguna imagen del coche?" : "¡Listo!"}
                                     name="imgLink"
-                                    customUpload                                                                        
+                                    customUpload
+                                    auto
                                     uploadHandler={this.uploadHandler}
                                 />
                                 <br></br>
@@ -306,7 +313,7 @@ class TripRoot extends React.Component {
                         </Row>
                         <Row className="justify-content-md-center">
                             <Col md="auto">
-                                <Button variant="dark" style={{ marginLeft: "auto" }} type="submit" >Confirmar</Button>
+                                {button}
                             </Col>
                         </Row>
                     </Form>
