@@ -11,7 +11,7 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Map from '../../components/UI/Map/Map';
-import Axios from 'axios';
+import axios from 'axios';
 
 
 class TripRoot extends React.Component {
@@ -21,6 +21,7 @@ class TripRoot extends React.Component {
         mapTitle: "Desde...",
         mapSubtitle: "Haz click para marcar tu punto de salida",
         postingData: false,
+        postingImg: false,
         id: 0,
         title: '',
         departureTime: '',
@@ -32,13 +33,7 @@ class TripRoot extends React.Component {
         description: '',
         imgLink: '',
         seats: '2',
-        driver: {
-            "id": "5e1768e1494e0738fe566ac7",
-            "name": "abcd",
-            "email": "abcd",
-            "ownedAnnounces": null,
-            "joinedAnnounces": null
-        },
+        driver: JSON.parse(sessionStorage.user),
         passengers: null
     }
 
@@ -104,7 +99,6 @@ class TripRoot extends React.Component {
         this.setState({
             overlays: [newMarker]
         });
-        console.log(this.state)
     }
 
     onChange = e => {
@@ -113,7 +107,7 @@ class TripRoot extends React.Component {
 
     handleSubmit = e => {
         e.preventDefault();
-        this.setState(prevState => ({ postingData: !prevState.postingData }));
+        this.setState(prevState => ({ postingData: !prevState.postingData, postingImg: !prevState.postingImg }));
         fetch('https://coffeecar.herokuapp.com/api/announces', {
             method: (this.props.item ? 'put' : 'post'),
             headers: {
@@ -134,7 +128,10 @@ class TripRoot extends React.Component {
                 passengers: this.state.passengers
             })
         })
-            .then(this.setState(prevState => ({ postingData: !prevState.postingData })))
+            .then(
+                this.setState(prevState => ({ 
+                    postingData: !prevState.postingData, 
+                    postingImg: !prevState.postingImg })))
             .catch(err => console.log(err))
     }
 
@@ -182,7 +179,7 @@ class TripRoot extends React.Component {
         const formData = new FormData();
         formData.append("image", e.files[0]);
 
-        Axios(apiUrl, {
+        axios(apiUrl, {
             method: 'POST',
             headers: {
                 authorization: `Client-ID ${apiKey}`
@@ -204,9 +201,28 @@ class TripRoot extends React.Component {
                     aria-hidden="true"
                 />
             </Button>
-            : 
-            <Button variant="dark" style={{ marginLeft: "auto" }} type="submit" >Confirmar</Button>
-            ;
+            :
+            <Button variant="dark" style={{ marginLeft: "auto" }} type="submit" >Confirmar</Button>;
+
+        let uploader = this.state.postingImg ?
+            <Button variant="dark" disabled>
+                <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                />
+            </Button>
+            : <FileUpload
+                mode="basic"
+                chooseLabel={this.state.imgLink === '' ? "¿Alguna imagen del coche?" : "¡Listo! ¿No te convence?"}
+                name="imgLink"
+                customUpload
+                auto
+                uploadHandler={this.uploadHandler}
+            />
+
         return (
             <Card style={{ width: '75%', margin: 'auto', marginTop: '50px', boxShadow: "5px 5px 5px grey" }}>
                 <Card.Body>
@@ -226,14 +242,7 @@ class TripRoot extends React.Component {
                                         onChange={this.onChange}
                                         value={this.state.title === null ? '' : this.state.title} />
                                 </FormGroup>
-                                <FileUpload
-                                    mode="basic"
-                                    chooseLabel={this.state.imgLink === '' ? "¿Alguna imagen del coche?" : "¡Listo!"}
-                                    name="imgLink"
-                                    customUpload
-                                    auto
-                                    uploadHandler={this.uploadHandler}
-                                />
+                                {uploader}
                                 <br></br>
                                 <Label>Asientos</Label>
                                 <Form.Row>
