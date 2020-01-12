@@ -163,7 +163,6 @@ class TripRoot extends React.Component {
                 driver,
                 passengers
             } = this.props.item
-                        
             this.setState({
                 id,
                 title,
@@ -200,7 +199,7 @@ class TripRoot extends React.Component {
                                             id="title"
                                             plaintext={this.state.writable}
                                             readOnly={this.state.writable}
-                                            onChange={this.state.onChange}
+                                            onChange={this.onChange}
                                             value={this.state.title === null ? '' : this.state.title} />
                                     </FormGroup>
                                     <Label>Asientos</Label>
@@ -214,7 +213,7 @@ class TripRoot extends React.Component {
                                                 id="seats"
                                                 plaintext={this.state.writable}
                                                 readOnly={this.state.writable}
-                                                onChange={this.state.onChange}
+                                                onChange={this.onChange}
                                                 value={this.state.seats === null ? '' : this.state.seats} />
                                         </FormGroup>
                                         <FormGroup as={Col} md="auto">
@@ -225,7 +224,7 @@ class TripRoot extends React.Component {
                                                 id="seats"
                                                 plaintext={this.state.writable}
                                                 readOnly={this.state.writable}
-                                                onChange={this.state.onChange}
+                                                onChange={this.onChange}
                                                 value={this.state.seats === null ? '' : this.state.seats} />
                                         </FormGroup>
                                     </Form.Row>
@@ -238,7 +237,7 @@ class TripRoot extends React.Component {
                                                 id="departureTime"
                                                 plaintext={this.state.writable}
                                                 readOnly={this.state.writable}
-                                                onChange={this.state.onChange}
+                                                onChange={this.onChange}
                                                 value={this.state.departureTime === null ? '' : this.state.departureTime} />
                                         </FormGroup>
                                         <FormGroup as={Col}>
@@ -249,7 +248,7 @@ class TripRoot extends React.Component {
                                                 id="arrivalDate"
                                                 plaintext={this.state.writable}
                                                 readOnly={this.state.writable}
-                                                onChange={this.state.onChange}
+                                                onChange={this.onChange}
                                                 value={this.state.arrivalDate === null ? '' : this.state.arrivalDate} />
                                         </FormGroup>
                                     </Form.Row>
@@ -262,7 +261,7 @@ class TripRoot extends React.Component {
                                             row="3"
                                             plaintext={this.state.writable}
                                             readOnly={this.state.writable}
-                                            onChange={this.state.onChange}
+                                            onChange={this.onChange}
                                             value={this.state.description === null ? '' : this.state.description} />
                                     </FormGroup>
                                 </Col>
