@@ -10,6 +10,7 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Map from '../../components/UI/Map/Map';
+import Axios from 'axios';
 
 
 class TripRoot extends React.Component {
@@ -109,7 +110,8 @@ class TripRoot extends React.Component {
     }
 
     handleSubmit = e => {
-        e.preventDefault()
+        e.preventDefault();
+        console.log(this.state);
         fetch('https://coffeecar.herokuapp.com/api/announces', {
             method: (this.props.item ? 'put' : 'post'),
             headers: {
@@ -181,31 +183,21 @@ class TripRoot extends React.Component {
     }
 
     uploadHandler = e => {
-
-
-        const apiUrl = 'https://api.imgur.com/3/image';
+        const apiUrl = 'https://api.imgur.com/3/upload.json';
         const apiKey = '546c25a59c58ad7';
-
-        let settings = {
-            async: false,
-            crossDomain: true,
-            processData: false,
-            contentType: false,
-            type: 'POST',
-            url: apiUrl,
-            headers: {
-                Authorization: 'Client-ID ' + apiKey,
-                Accept: 'application/json'
-            },
-            mimeType: 'multipart/form-data',
-        };
 
         const formData = new FormData();
         formData.append("image", e.files[0]);
-        settings.data = formData;
-        fetch(apiKey, settings)
-            .then(response => console.log(response))
-            .catch(response => console.log(response.error));
+
+        Axios(apiUrl, {
+            method: 'POST',
+            headers: {
+                authorization: `Client-ID ${apiKey}`
+            },
+            data: formData
+        })
+            .then(res => this.setState({ imgLink: res.data.data.link }))
+            .catch(error => console.log(error));
     }
 
     render() {
@@ -232,8 +224,7 @@ class TripRoot extends React.Component {
                                     mode="basic"
                                     chooseLabel="¿Alguna imagen del coche?"
                                     name="imgLink"
-                                    customUpload
-                                    auto
+                                    customUpload                                                                        
                                     uploadHandler={this.uploadHandler}
                                 />
                                 <br></br>
