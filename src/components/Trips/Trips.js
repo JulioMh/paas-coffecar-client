@@ -5,7 +5,7 @@ import { DataView, DataViewLayoutOptions } from "primereact/dataview";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import axios from 'axios';
-import ServiceTrips from './api';
+
 
 class Trips extends Component {
 
@@ -21,15 +21,15 @@ class Trips extends Component {
             name: '',
             comment: ''
         };
-        this.serviceTrips = new ServiceTrips();
+       /* this.serviceTrips = new ServiceTrips();*/
         this.itemTemplate = this.itemTemplate.bind(this);
         this.onSortChange = this.onSortChange.bind(this);
     }
 
 
     componentDidMount() {
-        this.serviceTrips.getAllTrips().then(data => this.setState({ trips: data }));
-        console.log(this.trips);
+       /* this.serviceTrips.getAllTrips().then(data => this.setState({ trips: data }));
+        console.log(this.trips);*/
     }
 
 
