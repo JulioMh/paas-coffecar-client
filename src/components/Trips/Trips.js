@@ -13,14 +13,13 @@ class Trips extends Component {
     constructor() {
         super();
         this.state = {
-            trips: [],
+            trips: null,
             layout: 'list',
             selectedCar: null,
             visible: false,
             sortKey: null,
             sortOrder: null,
-            name: '',
-            comment: ''
+            myTrips: false
         };
        
         this.itemTemplate = this.itemTemplate.bind(this);
@@ -29,14 +28,15 @@ class Trips extends Component {
 
 
     componentDidMount() {
-       axios.get('http://coffeecar.herokuapp.com/api/announces/')
+       /* axios.get('http://coffeecar.herokuapp.com/api/announces/')
         .then( res => {
             const trips = res.data;
+            console.log(trips);
             this.setState({ trips });
         })
         .catch( err => {
             console.log(err);
-        })
+        })*/
     }
 
 
@@ -147,12 +147,12 @@ class Trips extends Component {
             </div>
         );
     }
-
+   
     
 
     render() {
         const header = this.renderHeader();
-
+        console.log(this.state)
         return (
             <div>
                 <div className="content-section introduction">
