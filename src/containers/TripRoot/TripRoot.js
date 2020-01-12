@@ -113,7 +113,7 @@ class TripRoot extends React.Component {
 
     handleSubmit = e => {
         e.preventDefault()
-        fetch('http://localhost:8080/api/announces', {
+        fetch('https://coffeecar.herokuapp.com/api/announces', {
             method: (this.props.item ? 'put' : 'post'),
             headers: {
                 'Content-Type': 'application/json'
@@ -183,12 +183,11 @@ class TripRoot extends React.Component {
 
     render() {
         return (
-            <Form>
+            <Form onSubmit={this.handleSubmit}>
                 <Card style={{ width: '75%', margin: 'auto', marginTop: '70px', boxShadow: "5px 5px 5px grey" }}>
                     <Card.Body>
                         <Card.Title>{this.props.item ? 'Información del viaje' : '¡Publica tu viaje ahora!'}</Card.Title>
                         <Card.Subtitle className="mb-2 text-muted">Que no se te olviden las llaves :P</Card.Subtitle>
-                        <Form onSubmit={this.handleSubmit}>
                             <Row>
                                 <Col>
                                     <FormGroup>
@@ -284,7 +283,6 @@ class TripRoot extends React.Component {
                                     <Button variant="dark" style={{ marginLeft: "auto" }} type="submit" >Confirmar</Button>
                                 </Col>
                             </Row>
-                        </Form>
                     </Card.Body>
                 </Card >
             </Form>
