@@ -10,15 +10,12 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Map from '../../components/UI/Map/Map';
 
-
 class TripRoot extends React.Component {
     state = {
         writable: false,
         overlays: null,
-        selectedPosition: null,
         mapTitle: "Desde...",
         mapSubtitle: "Haz click para marcar tu punto de salida",
-
         id: 0,
         title: '',
         departureTime: '',
@@ -29,7 +26,7 @@ class TripRoot extends React.Component {
         departureLongitude: '',
         description: '',
         imgLink: '',
-        seats: '',
+        seats: '2',
         driver: {
             "id": "5e1768e1494e0738fe566ac7",
             "name": "abcd",
@@ -41,22 +38,20 @@ class TripRoot extends React.Component {
     }
 
     onMapClick = e => {
-        if (this.state.departureLatitude && !this.state.arrivalLatitude) {
+        if (this.state.selectedDeparture && !this.state.selectedArrival) {
             this.setState({
-                selectedPosition: e.latLng,
                 arrivalLatitude: e.latLng.lat(),
                 arrivalLongitude: e.latLng.lng(),
                 mapTitle: '¿Te has equivocado?',
-                mapSubtitle: '¡Arregla tu desastre moviendo las marcas!'
+                mapSubtitle: '¡Arregla tu desastre moviendo las marcas!',
             });
             this.addArrivalMarker();
-        } else if (!this.state.arrivalLatitude) {
-            this.setState({
-                selectedPosition: e.latLng,
+        } else if (!this.state.selectedB) {
+            this.setState({        
                 departureLatitude: e.latLng.lat(),
-                departureLongitude: e.latLng.lng(),
+                departureLongitude: e.latLng.lng(),                
                 mapTitle: 'Hasta...',
-                mapSubtitle: 'Haz click aqui para marcar tu destino'
+                mapSubtitle: 'Haz click aqui para marcar tu destino',
             });
             this.addDepartureMarker();
         }
@@ -79,8 +74,8 @@ class TripRoot extends React.Component {
     addArrivalMarker = () => {
         let newMarker = new google.maps.Marker({
             position: {
-                lat: this.state.selectedPosition.lat(),
-                lng: this.state.selectedPosition.lng()
+                lat: this.state.arrivalLatitude,
+                lng: this.state.arrivalLongitude
             },
             label: 'B',
             draggable: true,
@@ -94,8 +89,8 @@ class TripRoot extends React.Component {
     addDepartureMarker = () => {
         let newMarker = new google.maps.Marker({
             position: {
-                lat: this.state.selectedPosition.lat(),
-                lng: this.state.selectedPosition.lng()
+                lat: this.state.departureLatitude,
+                lng: this.state.departureLongitude
             },
             label: 'A',
             draggable: true,
@@ -110,7 +105,7 @@ class TripRoot extends React.Component {
     onChange = e => {
         this.setState({ [e.target.name]: e.target.value })
     }
-
+    
     handleSubmit = e => {
         e.preventDefault()
         fetch('https://coffeecar.herokuapp.com/api/announces', {
@@ -176,8 +171,10 @@ class TripRoot extends React.Component {
                 imgLink,
                 seats,
                 driver,
-                passengers
+                passengers,                
             })
+            this.addArrivalMarker();
+            this.addDepartureMarker();
         }
     }
 
@@ -219,10 +216,8 @@ class TripRoot extends React.Component {
                                             <Input
                                                 style={{ width: "50px" }}
                                                 type="text"
-                                                name="seats"
-                                                id="seats"
-                                                plaintext={this.state.writable}
-                                                readOnly={this.state.writable}
+                                                plaintext
+                                                readOnly
                                                 onChange={this.onChange}
                                                 value={this.state.seats === null ? '' : this.state.seats} />
                                         </FormGroup>
