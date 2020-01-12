@@ -1,0 +1,25 @@
+img {
+    width: 200px;
+}
+
+.center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.contenedor {
+    width: 500px;
+    height: 500px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -250px;
+    /* height/2 = 500px / 2 */
+    margin-left: -250px;
+    /* width/2 = 500px / 2 */
+}
