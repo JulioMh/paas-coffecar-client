@@ -14,7 +14,7 @@ class Welcome extends Component {
     };
 
     createOrKeepUser(postData) {
-        fetch("https://coffeecar.herokuapp.com/users/api/search/findByEmail?email=" + postData.email)
+        fetch("https://coffeecar.herokuapp.com/api/users/search/findByEmail?email=" + postData.email)
             .then((response) => {
                 if (!response.ok) {
                     let user = {
@@ -22,7 +22,7 @@ class Welcome extends Component {
                         email: postData.email
                     };
 
-                    fetch("https://coffeecar.herokuapp.com/users",
+                    fetch("https://coffeecar.herokuapp.com/api/users",
                         {
                             method: 'post',
                             headers: {
@@ -40,8 +40,10 @@ class Welcome extends Component {
                             }
                         });
 
+                } else {
+                    return response.json();
                 }
-                return response.json();
+
             })
             .then((myJson => {
                 //prueba
