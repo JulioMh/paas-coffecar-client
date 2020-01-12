@@ -4,6 +4,7 @@ import { Panel } from 'primereact/panel';
 import { DataView, DataViewLayoutOptions } from "primereact/dataview";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
+import axios from 'axios';
 
 
 
@@ -21,15 +22,21 @@ class Trips extends Component {
             name: '',
             comment: ''
         };
-       /* this.serviceTrips = new ServiceTrips();*/
+        this.serviceTrips = new ServiceTrips();
         this.itemTemplate = this.itemTemplate.bind(this);
         this.onSortChange = this.onSortChange.bind(this);
     }
 
 
     componentDidMount() {
-       /* this.serviceTrips.getAllTrips().then(data => this.setState({ trips: data }));
-        console.log(this.trips);*/
+       axios.get('http://coffeecar.herokuapp.com/api/announces/')
+        .then( res => {
+            const trips = res.data;
+            this.setState({ trips });
+        })
+        .catch( err => {
+            console.log(err);
+        })
     }
 
 
