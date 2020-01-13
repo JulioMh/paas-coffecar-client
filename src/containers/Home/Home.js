@@ -1,11 +1,20 @@
 import React, { Component } from 'react';
+
 import { TabView, TabPanel } from 'primereact/tabview';
 import Trips from '../../components/Trips/Trips';
+
+import { Redirect } from 'react-router-dom';
+
+
 
 class Home extends Component {
 
     render() {
+        if (!sessionStorage.getItem('user')) {
+            return (<Redirect to={'/'} />)
+        }
         return (
+
             <div>
                 <div className="content-section introduction">
                     <div className="feature-intro">
@@ -30,6 +39,7 @@ class Home extends Component {
                 </div>
             </div>
         )
+
     }
 }
 
