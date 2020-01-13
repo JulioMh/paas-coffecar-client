@@ -1,0 +1,15 @@
+# pack-refs with: peeled fully-peeled sorted 
+1d7f8e89da6c2b5c64983cd87916aa86db0e3f3d refs/heads/Navigation
+30d66b5debdbc975c53d1167e023a76459894bae refs/heads/adding-imgur-to-trip-root
+9a72f2b43f456220df060706788767ff08e0a7e3 refs/heads/adding-maps-to-trip-root
+79376f8289cdf274f16c797bfb1acca59f521491 refs/heads/axios
+f87dded8c5cfc1657242d00bbf4730360bde16ca refs/heads/develop
+2e70896764a90e354765f008dae6a08639c5ef7c refs/heads/hoc
+67d002314e734763296c32d7fee0f111f3c3d0a8 refs/heads/inicio
+6660ac0d710f50b4eed3d9316c9687fcf92ddba0 refs/heads/log-in
+55c5eaaa43868a9f47784773bea6180414fe4ef0 refs/heads/maps
+fb4f953b47df85eb9f1d4a39698074c59ddb89c5 refs/heads/master
+3aaee2200a009aed7268312af71a99699219f818 refs/heads/prime-react
+801360b4b383861b8c0772d0bb1ec53f1064be01 refs/heads/prueba
+1d7f8e89da6c2b5c64983cd87916aa86db0e3f3d refs/heads/root
+efe4266dfe4d1ab67e63c93c7ce796ea269d4169 refs/heads/trip-root
