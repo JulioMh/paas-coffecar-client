@@ -8,7 +8,9 @@ import { FileUpload } from 'primereact/fileupload';
 import Spinner from 'react-bootstrap/Spinner';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Col from 'react-bootstrap/Col';
+import Popover from 'react-bootstrap/Popover'
 import Row from 'react-bootstrap/Row';
 import Map from '../../components/UI/Map/Map';
 import axios from 'axios';
@@ -163,7 +165,7 @@ class TripRoot extends React.Component {
     }
 
     static getDerivedStateFromProps(props, state) {
-        if (props.item && state.id===0) {
+        if (props.item && state.id === 0) {
             return ({
                 id: props.item.id,
                 title: props.item.title,
@@ -178,7 +180,7 @@ class TripRoot extends React.Component {
                 seats: props.item.seats,
                 driver: props.item.driver,
                 passengers: props.item.passengers,
-                writable: props.item.driver.id===JSON.parse(sessionStorage.user).id
+                writable: props.item.driver.id === JSON.parse(sessionStorage.user).id
             });
         } else {
             return ({ driver: JSON.parse(sessionStorage.user) });
@@ -240,6 +242,13 @@ class TripRoot extends React.Component {
                 uploadHandler={this.uploadHandler}
             />
 
+        const image =
+            <Popover>
+                <Popover.Content>
+                    <img src={this.state.imgLink} alt='' />
+                </Popover.Content>
+            </Popover>
+
 
         return (
             <Card style={{ width: '75%', margin: 'auto', marginTop: '50px', boxShadow: "5px 5px 5px grey" }}>
@@ -260,7 +269,10 @@ class TripRoot extends React.Component {
                                         onChange={this.onChange}
                                         value={this.state.title === null ? '' : this.state.title} />
                                 </FormGroup>
-                                {uploader}
+                                {this.state.imgLink === '' ? uploader :
+                                    <OverlayTrigger trigger="click" placement="right" overlay={image}>
+                                        <Button variant="success">Click me to see</Button>
+                                    </OverlayTrigger>}
                                 <br></br>
                                 <Label>Asientos</Label>
                                 <Form.Row>
