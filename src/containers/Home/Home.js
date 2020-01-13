@@ -10,9 +10,9 @@ import { Redirect } from 'react-router-dom';
 class Home extends Component {
 
     render() {
-        if (!sessionStorage.getItem('user')) {
+       /* if (!sessionStorage.getItem('user')) {
             return (<Redirect to={'/'} />)
-        }
+        }*/
         return (
 
             <div>
@@ -26,10 +26,10 @@ class Home extends Component {
                 <div className="content-section implementation">
                     <TabView renderActiveOnly={true}>
                         <TabPanel header="Trips available" leftIcon="pi pi-calendar">
-                            <Trips name="nose me cambia" comment="pues eso"></Trips>
+                            <Trips></Trips>
                         </TabPanel>
                         <TabPanel header="My Trips" rightIcon="pi pi-user">
-                           <Trips name></Trips>
+                           <Trips></Trips>
                         </TabPanel>
 
                         <TabPanel header="no funcional" disabled={true}>

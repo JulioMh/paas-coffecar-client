@@ -4,7 +4,7 @@ export class CarService {
     
     getCarsSmall() {
         return axios.get('http://coffeecar.herokuapp.com/api/announces/')
-                .then(res => res.data.data);
+                .then(res => res.data);
     }
 
     getCarsMedium() {

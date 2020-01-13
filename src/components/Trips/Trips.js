@@ -1,181 +1,104 @@
-import React, { Component } from 'react';
-import { Dialog } from 'primereact/dialog';
-import { Panel } from 'primereact/panel';
-import { DataView, DataViewLayoutOptions } from "primereact/dataview";
+import React, { Component } from "react";
+import { Carousel } from "primereact/carousel";
 import { Button } from "primereact/button";
-import { Dropdown } from "primereact/dropdown";
-import axios from 'axios';
+import { CarService } from "../../prueba/pruebaFuncion";
+import { axios } from "axios";
+import { classes } from "./Trips.module.css";
 
+export class Trips extends Component {
+  constructor() {
+    super();
+    this.state = {
+      trips: []
+    };
+    this.carTemplate = this.carTemplate.bind(this);
 
+    this.responsiveSettings = [
+      {
+        breakpoint: "1024px",
+        numVisible: 3,
+        numScroll: 3
+      },
+      {
+        breakpoint: "768px",
+        numVisible: 2,
+        numScroll: 2
+      },
+      {
+        breakpoint: "560px",
+        numVisible: 1,
+        numScroll: 1
+      }
+    ];
+  }
 
-class Trips extends Component {
+  componentDidMount() {
+    fetch("http://coffeecar.herokuapp.com/api/announces/")
+      .then(response => {
+        return response.json();
+      })
+      .then(trips => {
+        this.setState({ trips: trips });
+      });
+  }
 
-    constructor() {
-        super();
-        this.state = {
-            trips: null,
-            layout: 'list',
-            selectedCar: null,
-            visible: false,
-            sortKey: null,
-            sortOrder: null,
-            myTrips: false
-        };
-       
-        this.itemTemplate = this.itemTemplate.bind(this);
-        this.onSortChange = this.onSortChange.bind(this);
-    }
-
-
-    componentDidMount() {
-       /* axios.get('http://coffeecar.herokuapp.com/api/announces/')
-        .then( res => {
-            const trips = res.data;
-            console.log(trips);
-            this.setState({ trips });
-        })
-        .catch( err => {
-            console.log(err);
-        })*/
-    }
-
-
-
-    onSortChange(event) {
-        const value = event.value;
-
-        if (value.indexOf('!') === 0) {
-            this.setState({
-                sortOrder: -1,
-                sortField: value.substring(1, value.length),
-                sortKey: value
-            });
-        }
-        else {
-            this.setState({
-                sortOrder: 1,
-                sortField: value,
-                sortKey: value
-            });
-        }
-    }
-
-    renderListItem(trip) {
-        return (
-            <div className="p-col-12">
-                <div className="car-details">
-                    <div>
-
-                        <div class="p-grid">
-                            <div className="p-col-12">Vin: <b>{trip.name}</b></div>
-                            <div className="p-col-12">Year: <b>{trip.username}</b></div>
-                            <div className="p-col-12">Brand: <b>{trip.phone}</b></div>
-                            <div className="p-col-12">Color: <b>{trip.email}</b></div>
-                        </div>
-                    </div>
-                    <Button icon="pi pi-search" onClick={(e) => this.setState({ selectedCar: trip, visible: true })}></Button>
-                </div>
+  carTemplate(trip) {
+    return (
+      <div className="car-details">
+        <div
+          className="p-grid p-nogutter"
+          aling-items="center"
+          y
+          justify-content="center"
+        >
+          <div className="p-col-12">
+            <img
+              src={trip.imgLink}
+              alt={trip.imgLink}
+              style={{ width: "200px" }}
+            />
+          </div>
+          <div className="p-col-12 car-data" style={{ width: "1000px" }}>
+            <div className="car-title" style={{ width: "1000px" }}>
+              <h2>{trip.title}</h2>
             </div>
-        );
-    }
-
-    renderGridItem(trip) {
-        return (
-            <div style={{ padding: '.5em' }} className="p-col-12 p-md-3">
-                <Panel header={trip.name} style={{ textAlign: 'center' }}>
-
-                    <div className="car-detail">{trip.year} - {trip.phone}</div>
-                    <Button icon="pi pi-search" onClick={(e) => this.setState({ selectedCar: trip, visible: true })}></Button>
-                </Panel>
+            <div className="car-subtitle">
+              {trip.departureTime} | {trip.arrivalDate}
             </div>
-        );
-    }
+            <div className="car-subtitle">{trip.description}</div>
 
-    itemTemplate(trip, layout) {
-        if (!trip) {
-            return;
-        }
-
-        if (layout === 'list')
-            return this.renderListItem(trip);
-        else if (layout === 'grid')
-            return this.renderGridItem(trip);
-    }
-
-    renderCarDialogContent() {
-        if (this.state.selectedCar) {
-            return (
-                <div className="p-grid" style={{ fontSize: '16px', textAlign: 'center', padding: '20px' }}>
-                    <div className="p-col-12" style={{ textAlign: 'center' }}>
-
-                    </div>
-
-                    <div className="p-col-4">Vin: </div>
-                    <div className="p-col-8">{this.state.selectedCar.name}</div>
-
-                    <div className="p-col-4">Year: </div>
-                    <div className="p-col-8">{this.state.selectedCar.username}</div>
-
-                    <div className="p-col-4">Brand: </div>
-                    <div className="p-col-8">{this.state.selectedCar.phone}</div>
-
-                    <div className="p-col-4">Color: </div>
-                    <div className="p-col-8">{this.state.selectedCar.email}</div>
-                </div>
-            );
-        }
-        else {
-            return null;
-        }
-    }
-
-    renderHeader() {
-        const sortOptions = [
-            { label: 'Newest First', value: '!year' },
-            { label: 'Oldest First', value: 'year' },
-            { label: 'Brand', value: 'brand' }
-        ];
-
-        return (
-            <div className="p-grid">
-                <div className="p-col-6" style={{ textAlign: 'left' }}>
-                    <Dropdown options={sortOptions} value={this.state.sortKey} placeholder="Sort By" onChange={this.onSortChange} />
-                </div>
-                <div className="p-col-6" style={{ textAlign: 'right' }}>
-                    <DataViewLayoutOptions layout={this.state.layout} onChange={(e) => this.setState({ layout: e.value })} />
-                </div>
+            <div className="car-buttons">
+              <Button label="Details" className="p-button-rounded" />
             </div>
-        );
-    }
-   
-    
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-    render() {
-        const header = this.renderHeader();
-        console.log(this.state)
-        return (
-            <div>
-                <div className="content-section introduction">
-                    <div className="feature-intro">
-                        <h1>{this.state.name}</h1>
-                        <p>{this.state.comment}</p>
-                    </div>
-                </div>
+  render() {
+    const verticalHeader = <h2>{this.props.name}</h2>;
 
-                <div className="content-section implementation">
-                    <DataView value={this.state.trips} layout={this.state.layout} header={header}
-                        itemTemplate={this.itemTemplate} paginatorPosition={'both'} paginator={true} rows={20}
-                        sortOrder={this.state.sortOrder} sortField={this.state.sortField} />
-
-                    <Dialog header="Car Details" visible={this.state.visible} width="225px" modal={true} onHide={() => this.setState({ visible: false })}>
-                        {this.renderCarDialogContent()}
-                    </Dialog>
-                </div>
-
-
-            </div>
-        );
-    }
+    return (
+      
+        <div className="carousel-demo" style={{ width: "5000px" }}>
+          <div className="content-section implementation">
+            <Carousel
+              value={this.state.trips}
+              itemTemplate={this.carTemplate}
+              orientation="vertical"
+              style={{ width: "500px", marginTop: "2em" }}
+              numVisible={1}
+              numScroll={1}
+              responsive={this.responsiveSettings}
+              verticalViewPortHeight="330px"
+              header={verticalHeader}
+            ></Carousel>
+          </div>
+        </div>
+      
+    );
+  }
 }
 
 export default Trips;

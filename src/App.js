@@ -26,22 +26,7 @@ class App extends Component {
 
   render() {
     return (
-      <BrowserRouter>
-        <div>
-          <header>
-            <Navigation logOut={this.logged} logged={this.state.logged} />
-          </header>
-          <Switch>
-            <Route path="/home" component={Home} exact />
-            <Route path="/trip/:id" component={Trip} />
-            <Route path="/create-trip" component={Trip} />
-            <Route exact path="/">
-              {this.state.logged ? <Redirect to="/home" /> : <Welcome logged={this.logged} />}
-            </Route>
-            <Route component={Error} />
-          </Switch>
-        </div>
-      </BrowserRouter>
+      <Home></Home>
     );
   }
 };
