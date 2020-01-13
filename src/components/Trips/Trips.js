@@ -3,7 +3,7 @@ import { Carousel } from "primereact/carousel";
 import { Button } from "primereact/button";
 import { CarService } from "../../prueba/pruebaFuncion";
 import { axios } from "axios";
-import { classes } from "./Trips.module.css";
+import "./Trips.module.css";
 
 export class Trips extends Component {
   constructor() {
@@ -31,19 +31,15 @@ export class Trips extends Component {
       }
     ];
   }
-
-  componentDidMount() {
-    fetch("http://coffeecar.herokuapp.com/api/announces/")
-      .then(response => {
-        return response.json();
-      })
-      .then(trips => {
-        this.setState({ trips: trips });
-      });
+  componentidMount(){
+      this.setState({trips: this.props.trips});
   }
 
+
   carTemplate(trip) {
+    
     return (
+        
       <div className="car-details">
         <div
           className="p-grid p-nogutter"
@@ -58,8 +54,8 @@ export class Trips extends Component {
               style={{ width: "200px" }}
             />
           </div>
-          <div className="p-col-12 car-data" style={{ width: "1000px" }}>
-            <div className="car-title" style={{ width: "1000px" }}>
+          <div className="p-col-12 car-data">
+            <div className="car-title">
               <h2>{trip.title}</h2>
             </div>
             <div className="car-subtitle">
@@ -78,25 +74,23 @@ export class Trips extends Component {
 
   render() {
     const verticalHeader = <h2>{this.props.name}</h2>;
-
+    console.log(this.state.trips);
     return (
-      
-        <div className="carousel-demo" style={{ width: "5000px" }}>
-          <div className="content-section implementation">
-            <Carousel
-              value={this.state.trips}
-              itemTemplate={this.carTemplate}
-              orientation="vertical"
-              style={{ width: "500px", marginTop: "2em" }}
-              numVisible={1}
-              numScroll={1}
-              responsive={this.responsiveSettings}
-              verticalViewPortHeight="330px"
-              header={verticalHeader}
-            ></Carousel>
-          </div>
+      <div className="carousel-demo">
+        <div className="content-section implementation">
+          <Carousel
+            value={this.state.trips}
+            itemTemplate={this.carTemplate}
+            orientation="vertical"
+            style={{ width: "1000px", marginTop: "2em"}}
+            numVisible={1}
+            numScroll={1}
+            responsive={this.responsiveSettings}
+            verticalViewPortHeight="400px"
+            header={verticalHeader}
+          ></Carousel>
         </div>
-      
+      </div>
     );
   }
 }

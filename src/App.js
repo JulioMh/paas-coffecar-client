@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import Home from './containers/Home/Home';
 import Trip from './containers/TripRoot/TripRoot';
