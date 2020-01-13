@@ -13,7 +13,7 @@ import 'primeicons/primeicons.css';
 class App extends Component {
 
   state = {
-    logged: false
+    logged: sessionStorage.user ? true : false,
   }
 
   logged = () => {
@@ -22,10 +22,30 @@ class App extends Component {
     }))
   }
 
-
   render() {
+    const trips=this.state.logged ? Trip: null;
+    const home=this.state.logged ? Home: null;
+    if(this.state.logged){
+
+    }
     return (
-      <Home></Home>
+
+      <BrowserRouter>
+        <div>
+          <header>
+            <Navigation logged={this.state.logged} logOut={this.logged} />
+          </header>
+          <Switch>
+            <Route path="/home" component={home} exact />          
+            <Route path="/trip" component={trips} exact/>
+            <Route exact path="/">
+              {this.state.logged ? <Redirect to="/home" /> : <Welcome logged={this.logged} />}
+            </Route>
+            <Route component={Error} />
+          </Switch>
+        </div>
+      </BrowserRouter>
+
     );
   }
 };

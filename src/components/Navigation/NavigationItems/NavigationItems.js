@@ -1,16 +1,13 @@
 import React from 'react';
 import { Navbar, Nav, Image } from 'react-bootstrap';
 import CoffeeCarLogo from '../../Logo/CoffeeCarLogo.png';
+import { Redirect } from 'react-router-dom';
 import { GoogleLogout } from 'react-google-login';
-
-
-
-
 
 const navigationItems = (props) => {
     let nav = null;
 
-    const logout = () => {
+    const logOut = () => {
         sessionStorage.removeItem('user');
         props.logOut();
     }
@@ -31,10 +28,12 @@ const navigationItems = (props) => {
                 <GoogleLogout
                     clientId="614940743476-2hc47higdlfhia4v8d6o4tstjpuc5kd0.apps.googleusercontent.com"
                     buttonText="Logout"
-                    onLogoutSuccess={logout}
+                    onLogoutSuccess={logOut}
                 />
             </Navbar>
         );
+    } else {
+        nav = <Redirect to="/" />;
     }
 
     return (

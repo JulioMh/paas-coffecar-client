@@ -16,7 +16,7 @@ import axios from 'axios';
 
 class TripRoot extends React.Component {
     state = {
-        writable: false,
+        writable: true,
         overlays: null,
         mapTitle: "Desde...",
         mapSubtitle: "Haz click para marcar tu punto de salida",
@@ -33,7 +33,7 @@ class TripRoot extends React.Component {
         description: '',
         imgLink: '',
         seats: '2',
-        driver: JSON.parse(sessionStorage.user),
+        driver: null,
         passengers: null
     }
 
@@ -101,6 +101,32 @@ class TripRoot extends React.Component {
         });
     }
 
+    addAllMarkers = () => {
+        let markers = [new google.maps.Marker({
+            position: {
+                lat: this.state.departureLatitude,
+                lng: this.state.departureLongitude
+            },
+            label: 'A',
+            draggable: this.state.writable,
+            animation: google.maps.Animation.DROP
+        }),
+        new google.maps.Marker({
+            position: {
+                lat: this.state.arrivalLatitude,
+                lng: this.state.arrivalLongitude
+            },
+            label: 'B',
+            draggable: this.state.writable,
+            animation: google.maps.Animation.DROP,
+        })];
+        this.setState({
+            overlays: markers,
+            mapTitle: '¿Quieres cambiar algo?',
+            mapSubtitle: '¡Mueve las marcas!'
+        })
+    }
+
     onChange = e => {
         this.setState({ [e.target.name]: e.target.value })
     }
@@ -129,49 +155,40 @@ class TripRoot extends React.Component {
             })
         })
             .then(
-                this.setState(prevState => ({ 
-                    postingData: !prevState.postingData, 
-                    postingImg: !prevState.postingImg })))
+                this.setState(prevState => ({
+                    postingData: !prevState.postingData,
+                    postingImg: !prevState.postingImg
+                })))
             .catch(err => console.log(err))
     }
 
+    static getDerivedStateFromProps(props, state) {
+        if (props.item && state.id===0) {
+            return ({
+                id: props.item.id,
+                title: props.item.title,
+                departureTime: props.item.departureTime,
+                arrivalDate: props.item.arrivalDate,
+                arrivalLatitude: props.item.arrivalLatitude,
+                arrivalLongitude: props.item.arrivalLongitude,
+                departureLatitude: props.item.departureLatitude,
+                departureLongitude: props.item.departureLongitude,
+                description: props.item.description,
+                imgLink: props.item.imgLink,
+                seats: props.item.seats,
+                driver: props.item.driver,
+                passengers: props.item.passengers,
+                writable: props.item.driver.id===JSON.parse(sessionStorage.user).id
+            });
+        } else {
+            return ({ driver: JSON.parse(sessionStorage.user) });
+        };
+    }
     componentDidMount() {
-        if (this.props.item) {
-            const {
-                id,
-                title,
-                departureTime,
-                arrivalDate,
-                arrivalLatitude,
-                arrivalLongitude,
-                departureLatitude,
-                departureLongitude,
-                description,
-                imgLink,
-                seats,
-                driver,
-                passengers
-            } = this.props.item
-            this.setState({
-                id,
-                title,
-                departureTime,
-                arrivalDate,
-                arrivalLatitude,
-                arrivalLongitude,
-                departureLatitude,
-                departureLongitude,
-                description,
-                imgLink,
-                seats,
-                driver,
-                passengers,
-            })
-            this.addArrivalMarker();
-            this.addDepartureMarker();
+        if (this.state.arrivalLatitude !== '') {
+            this.addAllMarkers();
         }
     }
-
     uploadHandler = e => {
         const apiUrl = 'https://api.imgur.com/3/upload.json';
         const apiKey = '546c25a59c58ad7';
@@ -202,7 +219,7 @@ class TripRoot extends React.Component {
                 />
             </Button>
             :
-            <Button variant="dark" style={{ marginLeft: "auto" }} type="submit" >Confirmar</Button>;
+            <Button variant="dark" style={{ marginLeft: "auto" }} type="submit" disabled={!this.state.writable} >Confirmar</Button>;
 
         let uploader = this.state.postingImg ?
             <Button variant="dark" disabled>
@@ -223,6 +240,7 @@ class TripRoot extends React.Component {
                 uploadHandler={this.uploadHandler}
             />
 
+
         return (
             <Card style={{ width: '75%', margin: 'auto', marginTop: '50px', boxShadow: "5px 5px 5px grey" }}>
                 <Card.Body>
@@ -237,8 +255,8 @@ class TripRoot extends React.Component {
                                         type="text"
                                         name="title"
                                         id="title"
-                                        plaintext={this.state.writable}
-                                        readOnly={this.state.writable}
+                                        plaintext={!this.state.writable}
+                                        readOnly={!this.state.writable}
                                         onChange={this.onChange}
                                         value={this.state.title === null ? '' : this.state.title} />
                                 </FormGroup>
@@ -253,8 +271,8 @@ class TripRoot extends React.Component {
                                             max="14"
                                             name="seats"
                                             id="seats"
-                                            plaintext={this.state.writable}
-                                            readOnly={this.state.writable}
+                                            plaintext={!this.state.writable}
+                                            readOnly={!this.state.writable}
                                             onChange={this.onChange}
                                             value={this.state.seats === null ? '' : this.state.seats} />
                                     </FormGroup>
@@ -275,8 +293,8 @@ class TripRoot extends React.Component {
                                             type="datetime-local"
                                             name="departureTime"
                                             id="departureTime"
-                                            plaintext={this.state.writable}
-                                            readOnly={this.state.writable}
+                                            plaintext={!this.state.writable}
+                                            readOnly={!this.state.writable}
                                             onChange={this.onChange}
                                             value={this.state.departureTime === null ? '' : this.state.departureTime} />
                                     </FormGroup>
@@ -286,8 +304,8 @@ class TripRoot extends React.Component {
                                             type="datetime-local"
                                             name="arrivalDate"
                                             id="arrivalDate"
-                                            plaintext={this.state.writable}
-                                            readOnly={this.state.writable}
+                                            plaintext={!this.state.writable}
+                                            readOnly={!this.state.writable}
                                             onChange={this.onChange}
                                             value={this.state.arrivalDate === null ? '' : this.state.arrivalDate} />
                                     </FormGroup>
@@ -300,8 +318,8 @@ class TripRoot extends React.Component {
                                         name="description"
                                         id="description"
                                         row="3"
-                                        plaintext={this.state.writable}
-                                        readOnly={this.state.writable}
+                                        plaintext={!this.state.writable}
+                                        readOnly={!this.state.writable}
                                         onChange={this.onChange}
                                         value={this.state.description === null ? '' : this.state.description} />
                                 </FormGroup>
@@ -312,6 +330,8 @@ class TripRoot extends React.Component {
                                         <Card.Title>{this.state.mapTitle}</Card.Title>
                                         <Card.Subtitle className="mb-2 text-muted">{this.state.mapSubtitle}</Card.Subtitle>
                                         <Map
+                                            lat={this.state.departureLatitude}
+                                            lng={this.state.departureLongitude}
                                             onOverlayDragEnd={this.onOverlayDragEnd}
                                             onMapClick={this.onMapClick}
                                             overlays={this.state.overlays}
