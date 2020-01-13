@@ -4,8 +4,8 @@ import { GMap } from 'primereact/gmap';
 
 const map = props => {
     const options = {
-        center: { lat: 36.72016, lng: -4.42034 },
-        zoom: 14,
+        center: { lat: props.lat===''? 36.72016 : props.lat, lng: props.lng===''? -4.42034 : props.lng },
+        zoom: 11,
         disableDefaultUI: true,
         styles: [
             { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
