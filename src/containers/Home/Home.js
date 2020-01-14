@@ -11,7 +11,6 @@ class Home extends Component {
 
     componentDidMount() {        
         if (!this.state.trips) {
-            console.log("ola")
             axios.get("https://coffeecar.herokuapp.com/api/announces")
                 .then(res => { this.setState({ trip: res.data }) })
         }
@@ -24,7 +23,6 @@ class Home extends Component {
     }
 
     render() {
-        console.log(this.state)
         let trip = null;
         if (this.state.trip) {
             trip = <Trip item={this.state.trip[this.state.trip.length - 1]} />;

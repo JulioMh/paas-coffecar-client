@@ -1,8 +1,10 @@
+/*global google*/
 import React from 'react';
 import { GMap } from 'primereact/gmap';
+import axios from 'axios';
 
 
-const map = props => {
+const map = props => {    
     const options = {
         center: { lat: props.lat===''? 36.72016 : props.lat, lng: props.lng===''? -4.42034 : props.lng },
         zoom: 11,

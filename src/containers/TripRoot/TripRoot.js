@@ -21,11 +21,13 @@ class TripRoot extends React.Component {
     state = {
         writable: true,
         overlays: null,
-        mapTitle: "Desde...",
-        mapSubtitle: "Haz click para marcar tu punto de salida",
+        mapTitle: "",
+        mapSubtitle: "",
         postingData: false,
+        buttonLabel: 'Confirmar',
         postingImg: false,
         showImg: false,
+        posted: false,
         id: 0,
         title: '',
         departureTime: '',
@@ -62,15 +64,17 @@ class TripRoot extends React.Component {
                 driver: props.item.driver,
                 passengers: passengers,
                 writable: props.item.driver.id === JSON.parse(sessionStorage.user).id,
+                posted: true,
                 joined: passengers.find(element => element.id === JSON.parse(sessionStorage.user).id)
             });
         } else {
             return ({ driver: JSON.parse(sessionStorage.user) });
         };
     }
+
     componentDidMount() {
         if (this.state.arrivalLatitude !== '') {
-            this.addAllMarkers();
+            this.addMarkers();
         }
     }
 
@@ -106,19 +110,14 @@ class TripRoot extends React.Component {
             this.setState({
                 arrivalLatitude: e.latLng.lat(),
                 arrivalLongitude: e.latLng.lng(),
-                mapTitle: '¿Te has equivocado?',
-                mapSubtitle: '¡Arregla tu desastre moviendo las marcas!',
             });
-            this.addArrivalMarker();
         } else if (!this.state.arrivalLatitude) {
             this.setState({
                 departureLatitude: e.latLng.lat(),
-                departureLongitude: e.latLng.lng(),
-                mapTitle: 'Hasta...',
-                mapSubtitle: 'Haz click aqui para marcar tu destino',
+                departureLongitude: e.latLng.lng()
             });
-            this.addDepartureMarker();
         }
+        this.addMarkers();
     }
 
     onOverlayDragEnd = e => {
@@ -135,60 +134,85 @@ class TripRoot extends React.Component {
         }
     }
 
-    addArrivalMarker = () => {
-        let newMarker = new google.maps.Marker({
+    createBusMarker = (bus) => {
+        return new google.maps.Marker({
             position: {
-                lat: this.state.arrivalLatitude,
-                lng: this.state.arrivalLongitude
+                lat: parseInt(bus.lat),
+                lng: parseInt(bus.lng)
             },
-            label: 'B',
-            draggable: true,
-            animation: google.maps.Animation.DROP,
-        });
-        this.setState({
-            overlays: [...this.state.overlays, newMarker],
-        });
-    }
-
-    addDepartureMarker = () => {
-        let newMarker = new google.maps.Marker({
-            position: {
-                lat: this.state.departureLatitude,
-                lng: this.state.departureLongitude
-            },
-            label: 'A',
-            draggable: true,
-            animation: google.maps.Animation.DROP
-        });
-        this.setState({
-            overlays: [newMarker]
-        });
-    }
-
-    addAllMarkers = () => {
-        let markers = [new google.maps.Marker({
-            position: {
-                lat: this.state.departureLatitude,
-                lng: this.state.departureLongitude
-            },
-            label: 'A',
-            draggable: this.state.writable,
-            animation: google.maps.Animation.DROP
-        }),
-        new google.maps.Marker({
-            position: {
-                lat: this.state.arrivalLatitude,
-                lng: this.state.arrivalLongitude
-            },
-            label: 'B',
-            draggable: this.state.writable,
-            animation: google.maps.Animation.DROP,
-        })];
-        this.setState({
-            overlays: markers,
-            mapTitle: '¿Quieres cambiar algo?',
-            mapSubtitle: '¡Mueve las marcas!'
+            title: ''+bus.codLinea
         })
+    }
+
+    addMarkers = () => {
+        let markers = this.state.overlays;
+        let title = 'Desde...';
+        let subtitle = "Haz click para marcar tu punto de salida";
+        if (this.state.departureLatitude !== '' && this.state.arrivalLatitude === '') {
+            markers = [new google.maps.Marker({
+                position: {
+                    lat: this.state.departureLatitude,
+                    lng: this.state.departureLongitude
+                },
+                label: 'A',
+                draggable: this.state.writable,
+                animation: google.maps.Animation.DROP
+            })];
+            title = 'Hasta...'
+            subtitle = 'Haz click aqui para marcar tu destino';
+        } else if (this.state.arrivalLatitude !== '') {
+
+            const markerA = new google.maps.Marker({
+                position: {
+                    lat: this.state.departureLatitude,
+                    lng: this.state.departureLongitude
+                },
+                label: 'A',
+                draggable: this.state.writable,
+                animation: google.maps.Animation.DROP,
+            });
+            const markerB = new google.maps.Marker({
+                position: {
+                    lat: this.state.arrivalLatitude,
+                    lng: this.state.arrivalLongitude
+                },
+                label: 'B',
+                draggable: this.state.writable,
+                animation: google.maps.Animation.DROP,
+            });
+
+            markers = markers ? [...markers, markerB] : [markerA, markerB];
+            title = '¿Quieres cambiar algo?';
+            subtitle = '¡Mueve las marcas!';
+        }
+
+        if (!this.state.writable) {
+            const popArray = (markers,busesMarkers) =>{
+                for(let index = 0; index<busesMarkers.length-1; index++){
+                    markers.push(busesMarkers[index]);
+                }
+                return markers;
+            }
+            axios.get('https://coffeecar.herokuapp.com/api/buses')
+                .then(response => {
+                    const buses = response.data;
+                    const busesMarkers = buses.map(bus => this.createBusMarker(bus, markers));
+                    markers = popArray(markers, busesMarkers);
+                    console.log(markers);
+                    this.setState({
+                        overlays: markers,
+                        mapTitle: title,
+                        mapSubtitle: subtitle
+                    })
+                })
+        }else {
+            this.setState({
+                overlays: markers,
+                mapTitle: title,
+                mapSubtitle: subtitle
+            })
+        }
+
     }
 
     handleJoin = () => {
@@ -198,7 +222,7 @@ class TripRoot extends React.Component {
             availableSeats: prevState.availableSeats - 1,
             joined: !prevState.joined
         }));
-        this.handleSubmit();
+        this.postData();
     }
 
     handleUnjoin = () => {
@@ -210,13 +234,19 @@ class TripRoot extends React.Component {
             availableSeats: prevState.availableSeats + 1,
             joined: !prevState.joined
         }));
-        this.handleSubmit();
+        this.postData();
     }
 
     handleSubmit = e => {
+        e.preventDefault();
+        this.postData();
+    }
+
+    postData = () => {
         this.setState(prevState => ({ postingData: !prevState.postingData }));
+        console.log(this.state);
         fetch('https://coffeecar.herokuapp.com/api/announces', {
-            method: (this.props.item ? 'put' : 'post'),
+            method: (this.state.posted ? 'put' : 'post'),
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -235,22 +265,24 @@ class TripRoot extends React.Component {
                 passengers: this.state.passengers
             })
         })
-            .then(
+            .then(response => {
                 this.setState(prevState => ({
-                    postingData: !prevState.postingData
-                })))
+                    posted: true,
+                    postingData: !prevState.postingData,
+                    buttonLabel: "¡Listo! ¿Quieres cambiar algo?"
+                }))
+            })
             .catch(err => console.log(err));
     }
 
     render() {
         const submitButton = this.state.writable ?
-            <Button variant="dark" style={{ marginLeft: "auto" }} type="submit" >Confirmar</Button>
+            <Button variant="dark" style={{ marginLeft: "auto" }} type="submit" >{this.state.buttonLabel}</Button>
             : null;
 
         const joinButton = this.state.joined ?
             <Button variant="danger" onClick={this.handleUnjoin}>¿Dejar el viaje?</Button>
             : <Button variant="success" onClick={this.handleJoin}>¡Unete al viaje!</Button>;
-
 
         const uploader = this.state.postingImg ?
             <Button variant="dark" disabled>
@@ -270,14 +302,14 @@ class TripRoot extends React.Component {
                 auto
                 uploadHandler={this.uploadHandler}
             />;
-        const showImgButton = this.state.imgLink ?
-            <Button variant="dark" onClick={this.handleModal}>Ver coche</Button>
+        let showImgButton = this.state.imgLink ?
+            this.state.postingImg ? null : <Button variant="dark" onClick={this.handleModal}>Ver coche</Button>
             : null;
 
 
         return (
             <Container>
-                <Modal show={this.state.showImg} size="lg"
+                <Modal show={this.state.showImg} size="md"
                     centered onHide={this.handleModal}>
                     <Image src={this.state.imgLink.concat("/171x180")} />
                 </Modal>
@@ -321,7 +353,7 @@ class TripRoot extends React.Component {
                                                     value={this.state.seats === null ? '' : this.state.seats} />
                                             </FormGroup> : null}
                                         <FormGroup as={Col}>
-                                            {this.state.writable? null: joinButton}
+                                            {this.state.writable ? null : joinButton}
                                         </FormGroup>
                                     </Form.Row>
                                     <Form.Row>
@@ -373,6 +405,7 @@ class TripRoot extends React.Component {
                                                 onOverlayDragEnd={this.onOverlayDragEnd}
                                                 onMapClick={this.onMapClick}
                                                 overlays={this.state.overlays}
+                                                writable={this.state.writable}
                                                 style={{ width: '100%', minHeight: "365px" }} />
                                         </Card.Body>
                                     </Card>

@@ -24,10 +24,7 @@ class App extends Component {
 
   render() {
     const trips=this.state.logged ? Trip: null;
-    const home=this.state.logged ? Home: null;
-    if(this.state.logged){
-
-    }
+    const home=this.state.logged ? Home: null;    
     return (
       <BrowserRouter>
         <div>
