@@ -17,7 +17,7 @@ const createBusMarker = (bus) => {
             lng: parseFloat(bus.lon)
         },
         icon: busIcon,
-        title: ''+bus.codLinea
+        title: 'Linea: '+bus.codLinea
     });
     
     return marker;
