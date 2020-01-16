@@ -185,15 +185,11 @@ class TripRoot extends React.Component {
             title= 'Transporte públio...';
             subtitle = '¡Elige como llegar hasta el coche!';
         }
-        console.log(markers);
         this.setState({
             overlays: markers,
             mapTitle: title,
             mapSubtitle: subtitle
         })
-        console.log(this.state)
-
-
     }
 
     handleJoin = () => {
@@ -318,7 +314,7 @@ class TripRoot extends React.Component {
                                     <FormGroup>
                                         {showImgButton}
                                     </FormGroup>
-                                    <Label>Asientos {this.state.availableSeats} disponibles de {this.state.seats} </Label>
+                                    <Label>{this.state.availableSeats} asientos disponibles de {this.state.seats} </Label>
                                     <Form.Row>
                                         {this.state.writable ?
                                             <FormGroup as={Col}>
