@@ -1,7 +1,5 @@
-/*global google*/
 import React from 'react';
 import { GMap } from 'primereact/gmap';
-import axios from 'axios';
 
 
 const map = props => {    

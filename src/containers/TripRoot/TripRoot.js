@@ -15,6 +15,7 @@ import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 import Map from '../../components/UI/Map/Map';
 import axios from 'axios';
+import utils from '../../utils/busStopUtils';
 
 
 class TripRoot extends React.Component {
@@ -134,17 +135,7 @@ class TripRoot extends React.Component {
         }
     }
 
-    createBusMarker = (bus) => {
-        return new google.maps.Marker({
-            position: {
-                lat: parseInt(bus.lat),
-                lng: parseInt(bus.lng)
-            },
-            title: ''+bus.codLinea
-        })
-    }
-
-    addMarkers = () => {
+    async addMarkers() {
         let markers = this.state.overlays;
         let title = 'Desde...';
         let subtitle = "Haz click para marcar tu punto de salida";
@@ -187,31 +178,21 @@ class TripRoot extends React.Component {
         }
 
         if (!this.state.writable) {
-            const popArray = (markers,busesMarkers) =>{
-                for(let index = 0; index<busesMarkers.length-1; index++){
-                    markers.push(busesMarkers[index]);
-                }
-                return markers;
-            }
-            axios.get('https://coffeecar.herokuapp.com/api/buses')
-                .then(response => {
-                    const buses = response.data;
-                    const busesMarkers = buses.map(bus => this.createBusMarker(bus, markers));
-                    markers = popArray(markers, busesMarkers);
-                    console.log(markers);
-                    this.setState({
-                        overlays: markers,
-                        mapTitle: title,
-                        mapSubtitle: subtitle
-                    })
-                })
-        }else {
-            this.setState({
-                overlays: markers,
-                mapTitle: title,
-                mapSubtitle: subtitle
-            })
+            const departureLatLng = new google.maps.LatLng(this.state.departureLatitude, this.state.departureLongitude);
+            const arrivalLatLng = new google.maps.LatLng(this.state.arrivalLatitude, this.state.arrivalLongitude);
+            const busAndStopMarkers = await utils(departureLatLng, arrivalLatLng);
+            markers = [...markers, ...busAndStopMarkers];
+            title= 'Transporte públio...';
+            subtitle = '¡Elige como llegar hasta el coche!';
         }
+        console.log(markers);
+        this.setState({
+            overlays: markers,
+            mapTitle: title,
+            mapSubtitle: subtitle
+        })
+        console.log(this.state)
+
 
     }
 
