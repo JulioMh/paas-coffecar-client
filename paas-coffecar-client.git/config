@@ -1,0 +1,8 @@
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = true
+	ignorecase = true
+[remote "origin"]
+	url = https://github.com/JulioMh/paas-coffecar-client
+	pushurl = https://github.com/coffeecaruma/paas-coffecar-client.git

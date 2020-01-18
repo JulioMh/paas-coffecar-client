@@ -8,20 +8,27 @@ import { FileUpload } from 'primereact/fileupload';
 import Spinner from 'react-bootstrap/Spinner';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Image from 'react-bootstrap/Image';
 import Col from 'react-bootstrap/Col';
+import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 import Map from '../../components/UI/Map/Map';
 import axios from 'axios';
+import utils from '../../utils/busStopUtils';
 
 
 class TripRoot extends React.Component {
     state = {
         writable: true,
         overlays: null,
-        mapTitle: "Desde...",
-        mapSubtitle: "Haz click para marcar tu punto de salida",
+        mapTitle: "",
+        mapSubtitle: "",
         postingData: false,
+        buttonLabel: 'Confirmar',
         postingImg: false,
+        showImg: false,
+        posted: false,
         id: 0,
         title: '',
         departureTime: '',
@@ -30,31 +37,88 @@ class TripRoot extends React.Component {
         arrivalLongitude: '',
         departureLatitude: '',
         departureLongitude: '',
+        availableSeats: '',
         description: '',
         imgLink: '',
         seats: '2',
         driver: null,
-        passengers: null
+        passengers: null,
+        joined: null,
     }
+
+    static getDerivedStateFromProps(props, state) {
+        if (props.item && state.id === 0) {
+            const passengers = props.item.passengers ? props.item.passengers : [];
+            return ({
+                id: props.item.id,
+                title: props.item.title,
+                departureTime: props.item.departureTime,
+                arrivalDate: props.item.arrivalDate,
+                arrivalLatitude: props.item.arrivalLatitude,
+                arrivalLongitude: props.item.arrivalLongitude,
+                departureLatitude: props.item.departureLatitude,
+                departureLongitude: props.item.departureLongitude,
+                availableSeats: props.item.seats - passengers.length,
+                description: props.item.description,
+                imgLink: props.item.imgLink,
+                seats: props.item.seats,
+                driver: props.item.driver,
+                passengers: passengers,
+                writable: props.item.driver.id === JSON.parse(sessionStorage.user).id,
+                posted: true,
+                joined: passengers.find(element => element.id === JSON.parse(sessionStorage.user).id)
+            });
+        } else {
+            return ({ driver: JSON.parse(sessionStorage.user) });
+        };
+    }
+
+    componentDidMount() {
+        if (this.state.arrivalLatitude !== '') {
+            this.addMarkers();
+        }
+    }
+
+    onChange = e => {
+        this.setState({ [e.target.name]: e.target.value })
+    }
+
+    uploadHandler = e => {
+        this.setState(prevState => ({ postingImg: !prevState.postingImg }))
+        const apiUrl = 'https://api.imgur.com/3/upload.json';
+        const apiKey = '546c25a59c58ad7';
+
+        const formData = new FormData();
+        formData.append("image", e.files[0]);
+
+        axios(apiUrl, {
+            method: 'POST',
+            headers: {
+                authorization: `Client-ID ${apiKey}`
+            },
+            data: formData
+        })
+            .then(res =>
+                this.setState(prevState => ({ postingImg: !prevState.postingImg, imgLink: res.data.data.link })
+                ))
+            .catch(error => console.log(error));
+    }
+
+    handleModal = () => { this.setState(prevState => ({ showImg: !prevState.showImg })) }
 
     onMapClick = e => {
         if (this.state.departureLatitude && !this.state.arrivalLatitude) {
             this.setState({
                 arrivalLatitude: e.latLng.lat(),
                 arrivalLongitude: e.latLng.lng(),
-                mapTitle: '¿Te has equivocado?',
-                mapSubtitle: '¡Arregla tu desastre moviendo las marcas!',
             });
-            this.addArrivalMarker();
         } else if (!this.state.arrivalLatitude) {
             this.setState({
                 departureLatitude: e.latLng.lat(),
-                departureLongitude: e.latLng.lng(),
-                mapTitle: 'Hasta...',
-                mapSubtitle: 'Haz click aqui para marcar tu destino',
+                departureLongitude: e.latLng.lng()
             });
-            this.addDepartureMarker();
         }
+        this.addMarkers();
     }
 
     onOverlayDragEnd = e => {
@@ -71,71 +135,95 @@ class TripRoot extends React.Component {
         }
     }
 
-    addArrivalMarker = () => {
-        let newMarker = new google.maps.Marker({
-            position: {
-                lat: this.state.arrivalLatitude,
-                lng: this.state.arrivalLongitude
-            },
-            label: 'B',
-            draggable: true,
-            animation: google.maps.Animation.DROP,
-        });
-        this.setState({
-            overlays: [...this.state.overlays, newMarker],
-        });
-    }
+    async addMarkers() {
+        let markers = this.state.overlays;
+        let title = 'Desde...';
+        let subtitle = "Haz click para marcar tu punto de salida";
+        if (this.state.departureLatitude !== '' && this.state.arrivalLatitude === '') {
+            markers = [new google.maps.Marker({
+                position: {
+                    lat: this.state.departureLatitude,
+                    lng: this.state.departureLongitude
+                },
+                label: 'A',
+                draggable: this.state.writable,
+                animation: google.maps.Animation.DROP
+            })];
+            title = 'Hasta...'
+            subtitle = 'Haz click aqui para marcar tu destino';
+        } else if (this.state.arrivalLatitude !== '') {
 
-    addDepartureMarker = () => {
-        let newMarker = new google.maps.Marker({
-            position: {
-                lat: this.state.departureLatitude,
-                lng: this.state.departureLongitude
-            },
-            label: 'A',
-            draggable: true,
-            animation: google.maps.Animation.DROP
-        });
-        this.setState({
-            overlays: [newMarker]
-        });
-    }
+            const markerA = new google.maps.Marker({
+                position: {
+                    lat: this.state.departureLatitude,
+                    lng: this.state.departureLongitude
+                },
+                label: 'A',
+                draggable: this.state.writable,
+                animation: google.maps.Animation.DROP,
+            });
+            const markerB = new google.maps.Marker({
+                position: {
+                    lat: this.state.arrivalLatitude,
+                    lng: this.state.arrivalLongitude
+                },
+                label: 'B',
+                draggable: this.state.writable,
+                animation: google.maps.Animation.DROP,
+            });
 
-    addAllMarkers = () => {
-        let markers = [new google.maps.Marker({
-            position: {
-                lat: this.state.departureLatitude,
-                lng: this.state.departureLongitude
-            },
-            label: 'A',
-            draggable: this.state.writable,
-            animation: google.maps.Animation.DROP
-        }),
-        new google.maps.Marker({
-            position: {
-                lat: this.state.arrivalLatitude,
-                lng: this.state.arrivalLongitude
-            },
-            label: 'B',
-            draggable: this.state.writable,
-            animation: google.maps.Animation.DROP,
-        })];
+            markers = markers ? [...markers, markerB] : [markerA, markerB];
+            title = '¿Quieres cambiar algo?';
+            subtitle = '¡Mueve las marcas!';
+        }
+
+        if (!this.state.writable) {
+            const departureLatLng = new google.maps.LatLng(this.state.departureLatitude, this.state.departureLongitude);
+            const arrivalLatLng = new google.maps.LatLng(this.state.arrivalLatitude, this.state.arrivalLongitude);
+            const busAndStopMarkers = await utils(departureLatLng, arrivalLatLng);
+            markers = [...markers, ...busAndStopMarkers];
+            title= 'Transporte públio...';
+            subtitle = '¡Elige como llegar hasta el coche!';
+        }
         this.setState({
             overlays: markers,
-            mapTitle: '¿Quieres cambiar algo?',
-            mapSubtitle: '¡Mueve las marcas!'
+            mapTitle: title,
+            mapSubtitle: subtitle
         })
     }
 
-    onChange = e => {
-        this.setState({ [e.target.name]: e.target.value })
+    handleJoin = () => {
+        const passengers = this.state.passengers ? this.state.passengers : [];
+        this.setState(prevState => ({
+            passengers: [...passengers, JSON.parse(sessionStorage.user)],
+            availableSeats: prevState.availableSeats - 1,
+            joined: !prevState.joined
+        }));
+        this.postData();
+    }
+
+    handleUnjoin = () => {
+        const passengers = this.state.passengers;
+        const passengerIndex = passengers.findIndex(passenger => passenger.id === JSON.parse(sessionStorage.user).id);
+        passengers.slice(passengerIndex, 1);
+        this.setState(prevState => ({
+            passengers: passengers,
+            availableSeats: prevState.availableSeats + 1,
+            joined: !prevState.joined
+        }));
+        this.postData();
     }
 
     handleSubmit = e => {
         e.preventDefault();
-        this.setState(prevState => ({ postingData: !prevState.postingData, postingImg: !prevState.postingImg }));
+        this.postData();
+    }
+
+    postData = () => {
+        this.setState(prevState => ({ postingData: !prevState.postingData }));
+        console.log(this.state);
         fetch('https://coffeecar.herokuapp.com/api/announces', {
-            method: (this.props.item ? 'put' : 'post'),
+            method: (this.state.posted ? 'put' : 'post'),
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -154,74 +242,26 @@ class TripRoot extends React.Component {
                 passengers: this.state.passengers
             })
         })
-            .then(
+            .then(response => {
                 this.setState(prevState => ({
+                    posted: true,
                     postingData: !prevState.postingData,
-                    postingImg: !prevState.postingImg
-                })))
-            .catch(err => console.log(err))
-    }
-
-    static getDerivedStateFromProps(props, state) {
-        if (props.item && state.id===0) {
-            return ({
-                id: props.item.id,
-                title: props.item.title,
-                departureTime: props.item.departureTime,
-                arrivalDate: props.item.arrivalDate,
-                arrivalLatitude: props.item.arrivalLatitude,
-                arrivalLongitude: props.item.arrivalLongitude,
-                departureLatitude: props.item.departureLatitude,
-                departureLongitude: props.item.departureLongitude,
-                description: props.item.description,
-                imgLink: props.item.imgLink,
-                seats: props.item.seats,
-                driver: props.item.driver,
-                passengers: props.item.passengers,
-                writable: props.item.driver.id===JSON.parse(sessionStorage.user).id
-            });
-        } else {
-            return ({ driver: JSON.parse(sessionStorage.user) });
-        };
-    }
-    componentDidMount() {
-        if (this.state.arrivalLatitude !== '') {
-            this.addAllMarkers();
-        }
-    }
-    uploadHandler = e => {
-        const apiUrl = 'https://api.imgur.com/3/upload.json';
-        const apiKey = '546c25a59c58ad7';
-
-        const formData = new FormData();
-        formData.append("image", e.files[0]);
-
-        axios(apiUrl, {
-            method: 'POST',
-            headers: {
-                authorization: `Client-ID ${apiKey}`
-            },
-            data: formData
-        })
-            .then(res => this.setState({ imgLink: res.data.data.link }))
-            .catch(error => console.log(error));
+                    buttonLabel: "¡Listo! ¿Quieres cambiar algo?"
+                }))
+            })
+            .catch(err => console.log(err));
     }
 
     render() {
-        let button = this.state.postingData ?
-            <Button variant="dark" disabled>
-                <Spinner
-                    as="span"
-                    animation="border"
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                />
-            </Button>
-            :
-            <Button variant="dark" style={{ marginLeft: "auto" }} type="submit" disabled={!this.state.writable} >Confirmar</Button>;
+        const submitButton = this.state.writable ?
+            <Button variant="dark" style={{ marginLeft: "auto" }} type="submit" >{this.state.buttonLabel}</Button>
+            : null;
 
-        let uploader = this.state.postingImg ?
+        const joinButton = this.state.joined ?
+            <Button variant="danger" onClick={this.handleUnjoin}>¿Dejar el viaje?</Button>
+            : <Button variant="success" onClick={this.handleJoin}>¡Unete al viaje!</Button>;
+
+        const uploader = this.state.postingImg ?
             <Button variant="dark" disabled>
                 <Spinner
                     as="span"
@@ -238,119 +278,127 @@ class TripRoot extends React.Component {
                 customUpload
                 auto
                 uploadHandler={this.uploadHandler}
-            />
+            />;
+        let showImgButton = this.state.imgLink ?
+            this.state.postingImg ? null : <Button variant="dark" onClick={this.handleModal}>Ver coche</Button>
+            : null;
 
 
         return (
-            <Card style={{ width: '75%', margin: 'auto', marginTop: '50px', boxShadow: "5px 5px 5px grey" }}>
-                <Card.Body>
-                    <Card.Title>{this.props.item ? 'Información del viaje' : '¡Publica tu viaje ahora!'}</Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted">Que no se te olviden las llaves :P</Card.Subtitle>
-                    <Form onSubmit={this.handleSubmit}>
-                        <Row>
-                            <Col>
-                                <FormGroup>
-                                    <Label>Titulo</Label>
-                                    <Input
-                                        type="text"
-                                        name="title"
-                                        id="title"
-                                        plaintext={!this.state.writable}
-                                        readOnly={!this.state.writable}
-                                        onChange={this.onChange}
-                                        value={this.state.title === null ? '' : this.state.title} />
-                                </FormGroup>
-                                {uploader}
-                                <br></br>
-                                <Label>Asientos</Label>
-                                <Form.Row>
-                                    <FormGroup as={Col}>
+            <Container>
+                <Modal show={this.state.showImg} size="md"
+                    centered onHide={this.handleModal}>
+                    <Image src={this.state.imgLink.concat("/171x180")} />
+                </Modal>
+                <Card style={{ width: '75%', margin: 'auto', marginTop: '50px', boxShadow: "5px 5px 5px grey" }}>
+                    <Card.Body>
+                        <Card.Title>{this.props.item ? 'Información del viaje' : '¡Publica tu viaje ahora!'}</Card.Title>
+                        <Card.Subtitle className="mb-2 text-muted">Que no se te olviden las llaves :P</Card.Subtitle>
+                        <Form onSubmit={this.handleSubmit}>
+                            <Row>
+                                <Col>
+                                    <FormGroup>
+                                        <Label>Titulo</Label>
                                         <Input
-                                            type="range"
-                                            min="1"
-                                            max="14"
-                                            name="seats"
-                                            id="seats"
-                                            plaintext={!this.state.writable}
-                                            readOnly={!this.state.writable}
-                                            onChange={this.onChange}
-                                            value={this.state.seats === null ? '' : this.state.seats} />
-                                    </FormGroup>
-                                    <FormGroup as={Col} md="auto">
-                                        <Input
-                                            style={{ width: "50px" }}
                                             type="text"
-                                            plaintext
-                                            readOnly
-                                            onChange={this.onChange}
-                                            value={this.state.seats === null ? '' : this.state.seats} />
-                                    </FormGroup>
-                                </Form.Row>
-                                <Form.Row>
-                                    <FormGroup as={Col}>
-                                        <Label>Fecha de salida</Label>
-                                        <Input
-                                            type="datetime-local"
-                                            name="departureTime"
-                                            id="departureTime"
+                                            name="title"
+                                            id="title"
                                             plaintext={!this.state.writable}
                                             readOnly={!this.state.writable}
                                             onChange={this.onChange}
-                                            value={this.state.departureTime === null ? '' : this.state.departureTime} />
+                                            value={this.state.title === null ? '' : this.state.title} />
                                     </FormGroup>
-                                    <FormGroup as={Col}>
-                                        <Label>Fecha de llegada</Label>
+                                    <FormGroup>
+                                        {this.state.writable ? uploader : null}
+                                    </FormGroup>
+                                    <FormGroup>
+                                        {showImgButton}
+                                    </FormGroup>
+                                    <Label>{this.state.availableSeats} asientos disponibles de {this.state.seats} </Label>
+                                    <Form.Row>
+                                        {this.state.writable ?
+                                            <FormGroup as={Col}>
+                                                <Input
+                                                    type="range"
+                                                    min="1"
+                                                    max="14"
+                                                    name="seats"
+                                                    id="seats"
+                                                    plaintext={!this.state.writable}
+                                                    readOnly={!this.state.writable}
+                                                    onChange={this.onChange}
+                                                    value={this.state.seats === null ? '' : this.state.seats} />
+                                            </FormGroup> : null}
+                                        <FormGroup as={Col}>
+                                            {this.state.writable ? null : joinButton}
+                                        </FormGroup>
+                                    </Form.Row>
+                                    <Form.Row>
+                                        <FormGroup as={Col}>
+                                            <Label>Fecha de salida</Label>
+                                            <Input
+                                                type="datetime-local"
+                                                name="departureTime"
+                                                id="departureTime"
+                                                plaintext={!this.state.writable}
+                                                readOnly={!this.state.writable}
+                                                onChange={this.onChange}
+                                                value={this.state.departureTime === null ? '' : this.state.departureTime} />
+                                        </FormGroup>
+                                        <FormGroup as={Col}>
+                                            <Label>Fecha de llegada</Label>
+                                            <Input
+                                                type="datetime-local"
+                                                name="arrivalDate"
+                                                id="arrivalDate"
+                                                plaintext={!this.state.writable}
+                                                readOnly={!this.state.writable}
+                                                onChange={this.onChange}
+                                                value={this.state.arrivalDate === null ? '' : this.state.arrivalDate} />
+                                        </FormGroup>
+                                    </Form.Row>
+                                    <Row></Row>
+                                    <FormGroup>
+                                        <Label>Descripción</Label>
                                         <Input
-                                            type="datetime-local"
-                                            name="arrivalDate"
-                                            id="arrivalDate"
+                                            as="textarea"
+                                            name="description"
+                                            id="description"
+                                            row="3"
                                             plaintext={!this.state.writable}
                                             readOnly={!this.state.writable}
                                             onChange={this.onChange}
-                                            value={this.state.arrivalDate === null ? '' : this.state.arrivalDate} />
+                                            value={this.state.description === null ? '' : this.state.description} />
                                     </FormGroup>
-                                </Form.Row>
-                                <Row></Row>
-                                <FormGroup>
-                                    <Label>Descripción</Label>
-                                    <Input
-                                        as="textarea"
-                                        name="description"
-                                        id="description"
-                                        row="3"
-                                        plaintext={!this.state.writable}
-                                        readOnly={!this.state.writable}
-                                        onChange={this.onChange}
-                                        value={this.state.description === null ? '' : this.state.description} />
-                                </FormGroup>
-                            </Col>
-                            <Col>
-                                <Card style={{ height: "97%", width: '100%', margin: 'auto' }}>
-                                    <Card.Body>
-                                        <Card.Title>{this.state.mapTitle}</Card.Title>
-                                        <Card.Subtitle className="mb-2 text-muted">{this.state.mapSubtitle}</Card.Subtitle>
-                                        <Map
-                                            lat={this.state.departureLatitude}
-                                            lng={this.state.departureLongitude}
-                                            onOverlayDragEnd={this.onOverlayDragEnd}
-                                            onMapClick={this.onMapClick}
-                                            overlays={this.state.overlays}
-                                            style={{ width: '100%', minHeight: "365px" }} />
-                                    </Card.Body>
-                                </Card>
-                            </Col>
-                        </Row>
-                        <Row className="justify-content-md-center">
-                            <Col md="auto">
-                                {button}
-                            </Col>
-                        </Row>
-                    </Form>
-                </Card.Body>
-            </Card >
+                                </Col>
+                                <Col>
+                                    <Card style={{ height: "97%", width: '100%', margin: 'auto' }}>
+                                        <Card.Body>
+                                            <Card.Title>{this.state.mapTitle}</Card.Title>
+                                            <Card.Subtitle className="mb-2 text-muted">{this.state.mapSubtitle}</Card.Subtitle>
+                                            <Map
+                                                lat={this.state.departureLatitude}
+                                                lng={this.state.departureLongitude}
+                                                onOverlayDragEnd={this.onOverlayDragEnd}
+                                                onMapClick={this.onMapClick}
+                                                overlays={this.state.overlays}
+                                                writable={this.state.writable}
+                                                style={{ width: '100%', minHeight: "365px" }} />
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
+                            </Row>
+                            <Row className="justify-content-md-center">
+                                <Col md="auto">
+                                    {submitButton}
+                                </Col>
+                            </Row>
+                        </Form>
+                    </Card.Body>
+                </Card >
+            </Container>
         );
     }
 }
-
 export default TripRoot;
 
