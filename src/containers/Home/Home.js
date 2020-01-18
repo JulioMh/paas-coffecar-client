@@ -3,9 +3,9 @@ import React, { Component } from "react";
 import { TabView, TabPanel } from "primereact/tabview";
 import Trips from "../../components/Trips/Trips";
 import { Redirect } from "react-router-dom";
-
+import Welcome from "../Welcome/Welcome";
 import Trip from '../TripRoot/TripRoot';
-import axios from 'axios';
+import axios from '../../axios-orders';
 
 
 class Home extends Component {
@@ -17,32 +17,35 @@ class Home extends Component {
     };
   }
 
+  
+
   componentDidMount() {
-    fetch(
-      "http://coffeecar.herokuapp.com/api/announces/"
-    )
-      .then(response => {
-        return response.json();
-      })
-      .then(tripsAvailable => {
-        this.setState({ tripsAvailable});
-      });
-    fetch(
-      "http://coffeecar.herokuapp.com/api/announces/"
-    )
+    
+    
+    fetch("announces/search/findByDriverEmail?email=" + sessionStorage.user.email) 
       .then(response => {
         return response.json();
       })
       .then(myTrips => {
+        console.log(myTrips)
         this.setState({ myTrips});
+      });
+    fetch("announces/search/findByDriverEmailNot?email=" + sessionStorage.user.email)
+      .then(response => {
+        return response.json();
+      })
+      .then(tripsAvailable => {
+        console.log(tripsAvailable);
+        this.setState({ tripsAvailable});
       });
   }
 
 
   render() {
-  /*  if (!sessionStorage.getItem('user')) {
-            return (<Redirect to={'/'} />)
-        }*/
+  if (!sessionStorage.getItem('user')) {
+            return (<Welcome logged={this.logged} />)
+        }
+    console.log(sessionStorage.user);   
     return (
       <div>
         <div className="content-section introduction">
@@ -67,7 +70,7 @@ class Home extends Component {
       </div>
     );
   }
-
+/*
     state = {
         trips: null,
         trip: false
@@ -87,7 +90,7 @@ class Home extends Component {
         );
     }
 
-    render() {
+     render() {
         console.log(this.state)
         let trip = null;
         if (this.state.trip) {
@@ -98,7 +101,7 @@ class Home extends Component {
                 {trip}
             </div>
         );
-    }
+    }*/
 
 }
 

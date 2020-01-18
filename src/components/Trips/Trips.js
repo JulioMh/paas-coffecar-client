@@ -31,7 +31,7 @@ export class Trips extends Component {
       }
     ];
   }
-  componentidMount(){
+  componentDidMount(){
       this.setState({trips: this.props.trips});
   }
 
