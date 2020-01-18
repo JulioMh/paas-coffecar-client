@@ -6,6 +6,7 @@ import { Redirect } from "react-router-dom";
 import Welcome from "../Welcome/Welcome";
 import Trip from '../TripRoot/TripRoot';
 import axios from '../../axios-orders';
+import "../../components/Trips/Trips.module.css";
 
 
 class Home extends Component {
@@ -22,7 +23,7 @@ class Home extends Component {
   componentDidMount() {
     
     
-    fetch("announces/search/findByDriverEmail?email=" + sessionStorage.user.email) 
+    fetch("http://coffeecar.herokuapp.com/api/announces") 
       .then(response => {
         return response.json();
       })
@@ -50,21 +51,20 @@ class Home extends Component {
       <div>
         <div className="content-section introduction">
           <div className="feature-intro">
-            <h1>Home</h1>
-            <p>Start to adventure</p>
+            <br></br>
           </div>
         </div>
 
-        <div className="content-section implementation">
-          <TabView renderActiveOnly={true}>
-            <TabPanel header="Trips available" leftIcon="pi pi-calendar">
+        <div className="content-section implementation" aling-items="center"
+          y
+          justify-content="center">
+          <TabView renderActiveOnly={true} style={{align: 'center', margin: 'auto'}} >
+            <TabPanel header="Trips available" leftIcon="pi pi-home" style={{align: 'center', margin: 'auto'}}>
               <Trips trips={this.state.tripsAvailable}></Trips>
             </TabPanel>
-            <TabPanel header="My Trips" rightIcon="pi pi-user">
+            <TabPanel header="My Trips" leftIcon="pi pi-user">
               <Trips trips={this.state.myTrips}></Trips>
             </TabPanel>
-
-            <TabPanel header="no funcional" disabled={true}></TabPanel>
           </TabView>
         </div>
       </div>

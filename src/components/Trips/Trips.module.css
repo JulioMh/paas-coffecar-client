@@ -2,3 +2,10 @@ div{
     text-align: center;
     align-content: center;
 }
+h2 {
+    font: italic small-caps bold 16px/2 cursive;
+    color: #1a245e;
+    font-weight: normal;
+    font-size: 35px;
+    text-transform: uppercase;
+  }

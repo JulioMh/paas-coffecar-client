@@ -4,6 +4,7 @@ import { Button } from "primereact/button";
 import { CarService } from "../../prueba/pruebaFuncion";
 import { axios } from "axios";
 import "./Trips.module.css";
+import {Card} from 'primereact/card';
 
 export class Trips extends Component {
   constructor() {
@@ -34,7 +35,9 @@ export class Trips extends Component {
   componentDidMount(){
       this.setState({trips: this.props.trips});
   }
+  encaminar(){
 
+  }
 
   carTemplate(trip) {
     
@@ -59,12 +62,15 @@ export class Trips extends Component {
               <h2>{trip.title}</h2>
             </div>
             <div className="car-subtitle">
-              {trip.departureTime} | {trip.arrivalDate}
+              <b>{trip.departureTime} | {trip.arrivalDate}</b>
             </div>
-            <div className="car-subtitle">{trip.description}</div>
-
+              <div className="content-section implementation">
+                    <Card title="descripcion" style={{width: '360px', margin: 'auto', marginTop: '50px',}}>
+                        <div>{trip.description}</div>
+                        </Card></div>
             <div className="car-buttons">
-              <Button label="Details" className="p-button-rounded" />
+              <br></br>
+              <Button label="Details" className="p-button-rounded" onClick={this.encaminar}/>
             </div>
           </div>
         </div>
@@ -82,7 +88,7 @@ export class Trips extends Component {
             value={this.state.trips}
             itemTemplate={this.carTemplate}
             orientation="vertical"
-            style={{ width: "1000px", marginTop: "2em"}}
+            style={{ width: '75%', margin: 'auto', marginTop: '50px', boxShadow: "5px 5px 5px grey" }}
             numVisible={1}
             numScroll={1}
             responsive={this.responsiveSettings}
