@@ -69,8 +69,18 @@ class TripRoot extends React.Component {
                 joined: passengers.find(element => element.id === JSON.parse(sessionStorage.user).id)
             });
         } else {
-            return ({ driver: JSON.parse(sessionStorage.user) });
+            if (state.id === 0) {
+                return ({ driver: JSON.parse(sessionStorage.user) });
+            } else {
+                return state;
+            }
         };
+    }
+
+    componentDidUpdate(){
+        if(this.state.postingData){
+            this.postData();
+        }
     }
 
     componentDidMount() {
@@ -99,7 +109,8 @@ class TripRoot extends React.Component {
             data: formData
         })
             .then(res =>
-                this.setState(prevState => ({ postingImg: !prevState.postingImg, imgLink: res.data.data.link })
+                this.setState(
+                    prevState => ({ postingImg: !prevState.postingImg, imgLink: res.data.data.link })
                 ))
             .catch(error => console.log(error));
     }
@@ -137,31 +148,22 @@ class TripRoot extends React.Component {
 
     async addMarkers() {
         let markers = this.state.overlays;
+        const markerA = new google.maps.Marker({
+            position: {
+                lat: this.state.departureLatitude,
+                lng: this.state.departureLongitude
+            },
+            label: 'A',
+            draggable: this.state.writable,
+            animation: google.maps.Animation.DROP,
+        });
         let title = 'Desde...';
         let subtitle = "Haz click para marcar tu punto de salida";
         if (this.state.departureLatitude !== '' && this.state.arrivalLatitude === '') {
-            markers = [new google.maps.Marker({
-                position: {
-                    lat: this.state.departureLatitude,
-                    lng: this.state.departureLongitude
-                },
-                label: 'A',
-                draggable: this.state.writable,
-                animation: google.maps.Animation.DROP
-            })];
+            markers = [markerA];
             title = 'Hasta...'
             subtitle = 'Haz click aqui para marcar tu destino';
         } else if (this.state.arrivalLatitude !== '') {
-
-            const markerA = new google.maps.Marker({
-                position: {
-                    lat: this.state.departureLatitude,
-                    lng: this.state.departureLongitude
-                },
-                label: 'A',
-                draggable: this.state.writable,
-                animation: google.maps.Animation.DROP,
-            });
             const markerB = new google.maps.Marker({
                 position: {
                     lat: this.state.arrivalLatitude,
@@ -171,7 +173,6 @@ class TripRoot extends React.Component {
                 draggable: this.state.writable,
                 animation: google.maps.Animation.DROP,
             });
-
             markers = markers ? [...markers, markerB] : [markerA, markerB];
             title = '¿Quieres cambiar algo?';
             subtitle = '¡Mueve las marcas!';
@@ -182,7 +183,7 @@ class TripRoot extends React.Component {
             const arrivalLatLng = new google.maps.LatLng(this.state.arrivalLatitude, this.state.arrivalLongitude);
             const busAndStopMarkers = await utils(departureLatLng, arrivalLatLng);
             markers = [...markers, ...busAndStopMarkers];
-            title= 'Transporte públio...';
+            title = 'Transporte públio...';
             subtitle = '¡Elige como llegar hasta el coche!';
         }
         this.setState({
@@ -193,41 +194,35 @@ class TripRoot extends React.Component {
     }
 
     handleJoin = () => {
-        const passengers = this.state.passengers ? this.state.passengers : [];
+        const newPassengers = [...this.state.passengers, JSON.parse(sessionStorage.user)];
         this.setState(prevState => ({
-            passengers: [...passengers, JSON.parse(sessionStorage.user)],
+            passengers: newPassengers,
             availableSeats: prevState.availableSeats - 1,
-            joined: !prevState.joined
+            postingData: !prevState.postingData 
         }));
-        this.postData();
     }
 
     handleUnjoin = () => {
         const passengers = this.state.passengers;
-        const passengerIndex = passengers.findIndex(passenger => passenger.id === JSON.parse(sessionStorage.user).id);
-        passengers.slice(passengerIndex, 1);
+        const newPassengers = passengers.filter(user => JSON.parse(sessionStorage.user).id !== user.id);
         this.setState(prevState => ({
-            passengers: passengers,
+            passengers: newPassengers,
             availableSeats: prevState.availableSeats + 1,
-            joined: !prevState.joined
+            postingData: !prevState.postingData 
         }));
-        this.postData();
     }
 
     handleSubmit = e => {
         e.preventDefault();
-        this.postData();
+        this.setState(prevState=>({postingData:!prevState.postingData}))
     }
 
     postData = () => {
-        this.setState(prevState => ({ postingData: !prevState.postingData }));
-        console.log(this.state);
-        fetch('https://coffeecar.herokuapp.com/api/announces', {
-            method: (this.state.posted ? 'put' : 'post'),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
+        if (this.state.arrivalLatitude === '' || this.state.departureLatitude === '') {
+            alert("Selecciona el lugar de origen y destino");
+            this.setState(prevState=>({postingData:!prevState.postingData}))
+        } else {
+            const body = {
                 title: this.state.title,
                 seats: this.state.seats,
                 departureTime: this.state.departureTime,
@@ -240,26 +235,67 @@ class TripRoot extends React.Component {
                 imgLink: this.state.imgLink,
                 driver: this.state.driver,
                 passengers: this.state.passengers
+            }
+            if (this.state.id !== 0) {
+                body.id = this.state.id;
+            }
+            fetch('https://coffeecar.herokuapp.com/api/announces', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
             })
-        })
-            .then(response => {
-                this.setState(prevState => ({
-                    posted: true,
-                    postingData: !prevState.postingData,
-                    buttonLabel: "¡Listo! ¿Quieres cambiar algo?"
-                }))
-            })
-            .catch(err => console.log(err));
+                .then(response => {
+                    this.setState(prevState => ({
+                        posted: true,
+                        postingData: !prevState.postingData,
+                        buttonLabel: "¡Listo! ¿Quieres cambiar algo?",
+                        joined: !prevState.joined
+
+                    }))
+                })
+                .catch(err => console.log(err));
+        }
     }
 
     render() {
         const submitButton = this.state.writable ?
-            <Button variant="dark" style={{ marginLeft: "auto" }} type="submit" >{this.state.buttonLabel}</Button>
+            this.state.postingData ? <Button variant="dark" disabled>
+                <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                />
+            </Button> :
+                <Button variant="dark" style={{ marginLeft: "auto" }} type="submit" >{this.state.buttonLabel}</Button>
             : null;
 
         const joinButton = this.state.joined ?
-            <Button variant="danger" onClick={this.handleUnjoin}>¿Dejar el viaje?</Button>
-            : <Button variant="success" onClick={this.handleJoin}>¡Unete al viaje!</Button>;
+            this.state.postingData ?
+                <Button variant="danger" disabled>
+                    <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                    />
+                </Button> :
+                <Button variant="danger" onClick={this.handleUnjoin}>¿Dejar el viaje?</Button>
+            : this.state.postingData ?
+                <Button variant="success" disabled>
+                    <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                    />
+                </Button> :
+                <Button variant="success" onClick={this.handleJoin}>¡Unete al viaje!</Button>;
 
         const uploader = this.state.postingImg ?
             <Button variant="dark" disabled>
