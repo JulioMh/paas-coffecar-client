@@ -65,7 +65,7 @@ export class Trips extends Component {
               <b>{trip.departureTime} | {trip.arrivalDate}</b>
             </div>
               <div className="content-section implementation">
-                    <Card title="descripcion" style={{width: '360px', margin: 'auto', marginTop: '50px',}}>
+                    <Card title="Description" style={{width: '360px', margin: 'auto', marginTop: '50px',}}>
                         <div>{trip.description}</div>
                         </Card></div>
             <div className="car-buttons">
