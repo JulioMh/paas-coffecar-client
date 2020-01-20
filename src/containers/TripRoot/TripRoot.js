@@ -184,7 +184,7 @@ class TripRoot extends React.Component {
             const busAndStopMarkers = await utils(departureLatLng, arrivalLatLng);
             markers = [...markers, ...busAndStopMarkers];
             title = 'Transporte públio...';
-            subtitle = '¡Elige como llegar hasta el coche!';
+            subtitle = 'Otra alternativa por si te dejan tirado...';
         }
         this.setState({
             overlays: markers,
@@ -252,7 +252,6 @@ class TripRoot extends React.Component {
                         postingData: !prevState.postingData,
                         buttonLabel: "¡Listo! ¿Quieres cambiar algo?",
                         joined: !prevState.joined
-
                     }))
                 })
                 .catch(err => console.log(err));
