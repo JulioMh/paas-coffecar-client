@@ -23,6 +23,7 @@ const navigationItems = (props) => {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
                         <Nav.Link href="/">Home</Nav.Link>
+                        <Nav.Link href="/twitter">Twitter</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
                 <GoogleLogout
