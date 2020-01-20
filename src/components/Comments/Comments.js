@@ -10,6 +10,16 @@ class Comments extends React.Component {
         comments: null
     }
 
+    componentDidMount(){
+        if(comments===null){
+            const __ =  
+            this.set
+        }
+    }
+
+    
+
+
 
     render() {
         return (
@@ -24,7 +34,6 @@ class Comments extends React.Component {
                             date={co.date}
                             text={co.text}
                         />
-
                     ))}
                 </Card.Body>
             </Card>
