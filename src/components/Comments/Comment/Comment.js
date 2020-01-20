@@ -3,30 +3,34 @@ import Card from 'react-bootstrap/Card';
 import Reply from '../Reply/Reply'
 import Button from 'react-bootstrap/Button';
 
-const comment = (props) => {
-    let reply = false;
-    replay ? <Reply id={props.id} isReply={true} /> : null;
-    return (
-        <Card style={{ width: '75%', margin: 'auto', marginTop: '20px', boxShadow: "5px 5px 5px grey" }}>
-            <Card.Body>
-                <Card.Title>{props.user}</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">{props.date}</Card.Subtitle>
-                <Card.Text>
-                    {props.text}
-                </Card.Text>
-                <Button onClick={() => replay = !reply}>Responder</Button>
-            </Card.Body>
-            {replay}
-            {props.responses.map(re => (
-                comment(
-                    key = re.id,
-                    id = re.id,
-                    user = re.user,
-                    date = re.date,
-                    text = re.text)
-            ))}
-        </Card>
-    )
-}
+class Comment extends React.Component {
+    state = {
+        showReply: false,
+    }
 
-export default comment;
+    render() {
+        let reply = this.state.showReply ?
+            <Reply comment={this.props.comment} handleSubmit={this.props.handleSubmit} /> : null
+
+        return (
+            <Card style={{ width: '100%', margin: 'auto', marginTop: '20px', boxShadow: "5px 5px 5px grey" }}>
+                <Card.Body>
+                    <Card.Title>{this.props.comment.author.name}</Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">{this.props.comment.date}</Card.Subtitle>
+                    <Card.Text>
+                        {this.props.comment.body}
+                    </Card.Text>
+                    <Button
+                        onClick={() => this.setState(prevState => ({ showReply: !prevState.showReply }))}
+                        variant='warning'
+                        style={{ marginBottom: '20px' }}>Responder</Button>
+                    {reply}
+                    {this.props.comment.responses.map(re => (
+                        <Comment key={re.id} comment = {re} handleSubmit={this.props.handleSubmit}/>
+                    ))}
+                </Card.Body>
+            </Card>
+        );
+    }
+}
+export default Comment;

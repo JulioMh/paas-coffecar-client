@@ -1,28 +1,46 @@
 import React, { Component } from 'react';
-import { InputTextarea } from 'primereact/inputtextarea';
+import Input from 'react-bootstrap/FormControl';
+import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button';
-import {classes} from './Reply.module.css'
+import FormGroup from 'react-bootstrap/FormGroup';
+import Form from 'react-bootstrap/Form';
 
 class Reply extends Component {
     state = {
-        value: 'Escribe tu comentario'
+        commentBody: '',
     };
 
-    handleSubmit() {
-        
+    handleChange = e => {
+        this.setState({ 
+            [e.target.name]: e.target.value 
+        })
+    }
+
+    handleSubmit = e  => {
+        e.preventDefault();
+        this.props.handleSubmit(this.state.commentBody, this.props.comment)
+        this.setState({commentBody:''});
     }
 
     render() {
-        
         return (
-            <div className={classes.reply}>
-                <form onSubmit={this.handleSubmit}>
-                    <InputTextarea value={this.state.value} onChange={(e) => this.setState({ value: e.target.value })} rows={3} cols={50} autoResize={true}></InputTextarea>
-                    <Button type='submit' value='Comentar'></Button>
-                </form>
-            </div>
+            <Form onSubmit={this.handleSubmit} >
+                    <FormGroup as={Col} >
+                        <Input
+                            as="textarea"
+                            name="commentBody"
+                            id="commentBody"
+                            placeholder='Y aqui el comentario'
+                            value={this.state.commentBody}
+                            onChange={this.handleChange}
+                        />
+                    </FormGroup>
+                <Col>
+                    <Button style={{ marginTop: "10px" }} type='submit' variant='dark'>Comentar</Button>
+                </Col>
+            </Form>
         );
     }
 }
 
-export default reply;
+export default Reply;
