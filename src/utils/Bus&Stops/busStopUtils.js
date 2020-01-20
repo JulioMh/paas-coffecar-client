@@ -1,4 +1,6 @@
 /*global google*/
+//import busIcon from '../../assets/Icons/bus.png';
+//import stopIcon from '../../assets/Icons/busStop.png';
 import axios from 'axios';
 import busIcon from './Icons/bus.png';
 import stopIcon from './Icons/busStop.png';
@@ -69,15 +71,15 @@ async function getNearbyStops(departure, arrival) {
 
 }
 
-const replace = (accumulator, nearbyLines, stop) => {
-    let isInAccumulator = false;
+const replace = (acumulator, nearbyLines, stop) => {
+    let isInAcumulator = false;
     let index = 0;
-    while (!isInAccumulator && index < accumulator.length - 1) {
-        isInAccumulator = accumulator[index].codParada === stop.codParada;
+    while (!isInAcumulator && index < acumulator.length - 1) {
+        isInAcumulator = acumulator[index].codParada === stop.codParada;
         index++;
     }
-    if (isInAccumulator) {
-        accumulator[index - 1].line.push(stop.codLinea);
+    if (isInAcumulator) {
+        acumulator[index - 1].line.push(stop.codLinea);
     } else {
         const newStop = {
             codParada: stop.codParada,
@@ -85,18 +87,18 @@ const replace = (accumulator, nearbyLines, stop) => {
             lat: stop.lat,
             lng: stop.lon
         }
-        accumulator.push(newStop)
+        acumulator.push(newStop)
     }
     if (!nearbyLines.includes(stop.codLinea))
         nearbyLines.push(stop.codLinea);
 }
 
 const fixResponse = (stops) => {
-    const accumulator = [];
+    const acumulator = [];
     const nearbyLines = [];
-    stops.map(stop => replace(accumulator, nearbyLines, stop));
+    stops.map(stop => replace(acumulator, nearbyLines, stop));
     const object = {
-        stops: accumulator,
+        stops: acumulator,
         lines: nearbyLines
     }
     return object;

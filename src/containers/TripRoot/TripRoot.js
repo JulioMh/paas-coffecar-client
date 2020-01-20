@@ -15,7 +15,7 @@ import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 import Map from '../../components/UI/Map/Map';
 import axios from 'axios';
-import utils from '../../utils/busStopUtils';
+import utils from '../../utils/Bus&Stops/busStopUtils';
 
 
 class TripRoot extends React.Component {
