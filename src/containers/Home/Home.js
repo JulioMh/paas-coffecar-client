@@ -15,28 +15,30 @@ class Home extends Component {
     this.state = {
       tripsAvailable: [],
       myTrips: []
+     
     };
   }
 
   
 
+
   componentDidMount() {
-    
-    
-    fetch("http://coffeecar.herokuapp.com/api/announces") 
+    let id = sessionStorage.user;
+    console.log(id)
+    fetch("http://coffeecar.herokuapp.com/api/announces/search/findByDriverId?id=" + JSON.parse(sessionStorage.user).id) 
       .then(response => {
         return response.json();
       })
       .then(myTrips => {
-        console.log(myTrips)
+        
         this.setState({ myTrips});
       });
-    fetch("announces/search/findByDriverEmailNot?email=" + sessionStorage.user.email)
+    fetch("http://coffeecar.herokuapp.com/api/announces/search/findByDriverIdNot?id=" + JSON.parse(sessionStorage.user).id)
       .then(response => {
         return response.json();
       })
       .then(tripsAvailable => {
-        console.log(tripsAvailable);
+        
         this.setState({ tripsAvailable});
       });
   }
@@ -46,7 +48,7 @@ class Home extends Component {
   if (!sessionStorage.getItem('user')) {
             return (<Welcome logged={this.logged} />)
         }
-    console.log(sessionStorage.user);   
+     
     return (
       <div>
         <div className="content-section introduction">

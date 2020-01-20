@@ -5,6 +5,7 @@ import { CarService } from "../../prueba/pruebaFuncion";
 import { axios } from "axios";
 import "./Trips.module.css";
 import {Card} from 'primereact/card';
+import { Redirect } from "react-router-dom";
 
 export class Trips extends Component {
   constructor() {
@@ -36,8 +37,7 @@ export class Trips extends Component {
       this.setState({trips: this.props.trips});
   }
   encaminar(){
-
-  }
+    <Redirect 
 
   carTemplate(trip) {
     
@@ -80,7 +80,7 @@ export class Trips extends Component {
 
   render() {
     const verticalHeader = <h2>{this.props.name}</h2>;
-    console.log(this.state.trips);
+    
     return (
       <div className="carousel-demo">
         <div className="content-section implementation">
