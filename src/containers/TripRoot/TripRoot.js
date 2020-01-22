@@ -444,7 +444,7 @@ class TripRoot extends React.Component {
                         </Form>
                     </Card.Body>
                 </Card >
-                {this.state.writable ? null : <Comments announce={announce}/>}
+                {this.state.id===0 ? null : <Comments announce={announce}/>}
             </Container>
         );
     }

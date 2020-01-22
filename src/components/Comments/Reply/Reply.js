@@ -18,7 +18,8 @@ class Reply extends Component {
 
     handleSubmit = e  => {
         e.preventDefault();
-        this.props.handleSubmit(this.state.commentBody, this.props.comment)
+        this.props.handleSubmit(this.state.commentBody, this.props.comment);
+        this.props.replied();
         this.setState({commentBody:''});
     }
 

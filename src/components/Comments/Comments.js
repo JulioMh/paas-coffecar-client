@@ -65,9 +65,13 @@ class Comments extends React.Component {
             <Card style={{ width: '75%', margin: 'auto', marginTop: '20px', boxShadow: "5px 5px 5px grey" }}>
                 <Card.Body>
                     <Card.Title>¡Comenta algo!</Card.Title>
-                    <Reply handleSubmit={this.handleSubmit} />
+                    <Reply handleSubmit={this.handleSubmit} replied = {() => {}}/>
                     {comments.map(co => (
-                        <Comment key={co.id} comment={co} handleSubmit={this.handleSubmit} />
+                        <Comment 
+                        key={co.id} 
+                        comment={co} 
+                        handleSubmit={this.handleSubmit}                        
+                        />
                     ))}
                 </Card.Body>
             </Card>
