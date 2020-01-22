@@ -4,12 +4,15 @@ import { Button } from "primereact/button";
 import "./Trips.module.css";
 import { Card } from "primereact/card";
 import { Redirect } from "react-router-dom";
+import { useHistory } from 'react-router-dom'
 
 export class Trips extends Component {
+  
   constructor() {
     super();
     this.state = {
-      trips: []
+      trips: [],
+      history: useHistory()
     };
     this.carTemplate = this.carTemplate.bind(this);
 
@@ -39,12 +42,17 @@ export class Trips extends Component {
   }  
   
 
-  encaminar(trip) {
-    return <Redirect to={{
-      pathname: "/trip",
-      state: { item: {trip}}
-    }}/>
+  encaminar = (trip) => {
+  "funcionAPICALL"
+       .then(response => {
+             if (response.status >= 200 && response.status < 300) {
+                 this.state.history.push({
+                   pathname: '/trip',
+                   state: {item : trip}})
+                 }});
   }
+
+    
 
   carTemplate(trip) {
     return (
