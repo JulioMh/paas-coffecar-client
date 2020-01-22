@@ -5,7 +5,7 @@ import Trips from "../../components/Trips/Trips";
 import { Redirect } from "react-router-dom";
 import Welcome from "../Welcome/Welcome";
 import Trip from '../TripRoot/TripRoot';
-import axios from '../../axios-orders';
+
 import "../../components/Trips/Trips.module.css";
 
 
@@ -30,7 +30,6 @@ class Home extends Component {
         return response.json();
       })
       .then(myTrips => {
-        
         this.setState({ myTrips});
       });
     fetch("http://coffeecar.herokuapp.com/api/announces/search/findByDriverIdNot?id=" + JSON.parse(sessionStorage.user).id)
@@ -38,30 +37,24 @@ class Home extends Component {
         return response.json();
       })
       .then(tripsAvailable => {
-        
         this.setState({ tripsAvailable});
       });
   }
 
 
   render() {
+  console.log(this.state)
   if (!sessionStorage.getItem('user')) {
             return (<Welcome logged={this.logged} />)
-        }
-     
+  }
+      
     return (
       <div>
-        <div className="content-section introduction">
-          <div className="feature-intro">
-            <br></br>
-          </div>
-        </div>
-
-        <div className="content-section implementation" aling-items="center"
+        <div className="content-section implementation" aling-items="center" 
           y
           justify-content="center">
           <TabView renderActiveOnly={true} style={{align: 'center', margin: 'auto'}} >
-            <TabPanel header="Trips available" leftIcon="pi pi-home" style={{align: 'center', margin: 'auto'}}>
+            <TabPanel header="Trips available" leftIcon="pi pi-home">
               <Trips trips={this.state.tripsAvailable}></Trips>
             </TabPanel>
             <TabPanel header="My Trips" leftIcon="pi pi-user">
@@ -71,7 +64,7 @@ class Home extends Component {
         </div>
       </div>
     );
-  }
+}
 /*
     state = {
         trips: null,
