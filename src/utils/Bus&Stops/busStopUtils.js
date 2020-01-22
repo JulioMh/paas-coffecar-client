@@ -71,15 +71,15 @@ async function getNearbyStops(departure, arrival) {
 
 }
 
-const replace = (acumulator, nearbyLines, stop) => {
-    let isInAcumulator = false;
+const replace = (accumulator, nearbyLines, stop) => {
+    let isInAccumulator = false;
     let index = 0;
-    while (!isInAcumulator && index < acumulator.length - 1) {
-        isInAcumulator = acumulator[index].codParada === stop.codParada;
+    while (!isInAccumulator && index < accumulator.length - 1) {
+        isInAccumulator = accumulator[index].codParada === stop.codParada;
         index++;
     }
-    if (isInAcumulator) {
-        acumulator[index - 1].line.push(stop.codLinea);
+    if (isInAccumulator) {
+        accumulator[index - 1].line.push(stop.codLinea);
     } else {
         const newStop = {
             codParada: stop.codParada,
@@ -87,18 +87,18 @@ const replace = (acumulator, nearbyLines, stop) => {
             lat: stop.lat,
             lng: stop.lon
         }
-        acumulator.push(newStop)
+        accumulator.push(newStop)
     }
     if (!nearbyLines.includes(stop.codLinea))
         nearbyLines.push(stop.codLinea);
 }
 
 const fixResponse = (stops) => {
-    const acumulator = [];
+    const accumulator = [];
     const nearbyLines = [];
-    stops.map(stop => replace(acumulator, nearbyLines, stop));
+    stops.map(stop => replace(accumulator, nearbyLines, stop));
     const object = {
-        stops: acumulator,
+        stops: accumulator,
         lines: nearbyLines
     }
     return object;

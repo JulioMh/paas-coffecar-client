@@ -16,6 +16,7 @@ import Row from 'react-bootstrap/Row';
 import Map from '../../components/UI/Map/Map';
 import axios from 'axios';
 import utils from '../../utils/Bus&Stops/busStopUtils';
+import Comments from '../../components/Comments/Comments';
 
 
 class TripRoot extends React.Component {
@@ -97,10 +98,8 @@ class TripRoot extends React.Component {
         this.setState(prevState => ({ postingImg: !prevState.postingImg }))
         const apiUrl = 'https://api.imgur.com/3/upload.json';
         const apiKey = '546c25a59c58ad7';
-
         const formData = new FormData();
         formData.append("image", e.files[0]);
-
         axios(apiUrl, {
             method: 'POST',
             headers: {
@@ -318,7 +317,21 @@ class TripRoot extends React.Component {
             this.state.postingImg ? null : <Button variant="dark" onClick={this.handleModal}>Ver coche</Button>
             : null;
 
-
+            const announce = {
+                title: this.state.title,
+                seats: this.state.seats,
+                departureTime: this.state.departureTime,
+                arrivalDate: this.state.arrivalDate,
+                arrivalLatitude: this.state.arrivalLatitude,
+                arrivalLongitude: this.state.arrivalLongitude,
+                departureLatitude: this.state.departureLatitude,
+                departureLongitude: this.state.departureLongitude,
+                description: this.state.description,
+                imgLink: this.state.imgLink,
+                driver: this.state.driver,
+                passengers: this.state.passengers,
+                id: this.state.id
+            }            
         return (
             <Container>
                 <Modal show={this.state.showImg} size="md"
@@ -431,6 +444,7 @@ class TripRoot extends React.Component {
                         </Form>
                     </Card.Body>
                 </Card >
+                {this.state.id===0 ? null : <Comments announce={announce}/>}
             </Container>
         );
     }

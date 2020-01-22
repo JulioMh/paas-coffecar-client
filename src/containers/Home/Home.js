@@ -92,7 +92,7 @@ class Home extends Component {
 
         let trip = null;
         if (this.state.trip) {
-            trip = <Trip item={this.state.trip[this.state.trip.length - 1]} />;
+            trip = <Trip item={this.state.trip[this.state.trip.length - 2]} />;
         }
         return (
             <div>
