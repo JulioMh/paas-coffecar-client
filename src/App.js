@@ -28,7 +28,6 @@ class App extends Component {
     const home=this.state.logged ? Home: null;    
     const twitter=this.state.logged ? Twitter: null; 
     return (
-
       <BrowserRouter>
         <div>
           <header>
@@ -45,7 +44,6 @@ class App extends Component {
           </Switch>
         </div>
       </BrowserRouter>
-
     );
   }
 };

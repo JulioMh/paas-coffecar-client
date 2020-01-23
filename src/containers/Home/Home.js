@@ -40,12 +40,12 @@ class Home extends Component {
             <div>
                 <div className="content-section implementation" aling-items="center" justify-content="center">
                     <TabView renderActiveOnly={true} style={{ align: 'center', margin: 'auto' }} >
-                        <TabPanel header="Trips available" leftIcon="pi pi-home">
+                        <TabPanel header="Viajes disponibles" leftIcon="pi pi-home">
                             <Trips
                                 trips={this.state.tripsAvailable}
                                 redirectToTrip={(tripId) => this.props.history.push(`/trip/${tripId}`)}></Trips>
                         </TabPanel>
-                        <TabPanel header="My Trips" leftIcon="pi pi-user">
+                        <TabPanel header="Mis viajes" leftIcon="pi pi-user">
                             <Trips
                                 trips={this.state.myTrips}
                                 redirectToTrip={(tripId) => this.props.history.push(`/trip/${tripId}`)}></Trips>

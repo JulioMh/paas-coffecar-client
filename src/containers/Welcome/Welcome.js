@@ -47,11 +47,11 @@ const welcome = (props) => {
         <div className={classes.contenedor}>
             <Card style={{ width: '100%', margin: 'auto', marginTop: '70px', boxShadow: "5px 5px 5px grey" }}>
                 <div className={classes.center}>
-                    <h1>Welcome to CoffeeCar</h1>
+                    <h1>¡Bienvenido a CoffeeCar!</h1>
                     <Image src={CoffeeCarLogo} className={classes.imgLogo} />
                     <GoogleLogin
                         clientId="614940743476-2hc47higdlfhia4v8d6o4tstjpuc5kd0.apps.googleusercontent.com"
-                        buttonText="Login with Google"
+                        buttonText="Login con Google"
                         theme="dark"
                         onSuccess={responseGoogle}
                         onFailure={responseGoogle} />
