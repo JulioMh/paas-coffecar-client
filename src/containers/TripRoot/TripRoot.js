@@ -3,7 +3,6 @@ import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Label from 'react-bootstrap/FormLabel';
 import Input from 'react-bootstrap/FormControl';
-import {Redirect} from 'react-router-dom';
 import FormGroup from 'react-bootstrap/FormGroup';
 import { FileUpload } from 'primereact/fileupload';
 import Spinner from 'react-bootstrap/Spinner';
@@ -30,6 +29,7 @@ class TripRoot extends React.Component {
         buttonLabel: 'Confirmar',
         postingImg: false,
         showImg: false,
+        deleting: false,
         posted: false,
         id: 0,
         title: '',
@@ -48,48 +48,43 @@ class TripRoot extends React.Component {
         joined: null,
     }
 
-    /*static getDerivedStateFromProps(props, state) {
-        if (props.item && state.id === 0) {
-            const passengers = props.item.passengers ? props.item.passengers : [];
-            return ({
-                id: props.item.id,
-                title: props.item.title,
-                departureTime: props.item.departureTime,
-                arrivalDate: props.item.arrivalDate,
-                arrivalLatitude: props.item.arrivalLatitude,
-                arrivalLongitude: props.item.arrivalLongitude,
-                departureLatitude: props.item.departureLatitude,
-                departureLongitude: props.item.departureLongitude,
-                availableSeats: props.item.seats - passengers.length,
-                description: props.item.description,
-                imgLink: props.item.imgLink,
-                seats: props.item.seats,
-                driver: props.item.driver,
-                passengers: passengers,
-                writable: props.item.driver.id === JSON.parse(sessionStorage.user).id,
-                posted: true,
-                joined: passengers.find(element => element.id === JSON.parse(sessionStorage.user).id)
-            });
-        } else {
-            if (state.id === 0) {
-                return ({ driver: JSON.parse(sessionStorage.user) });
-            } else {
-                return state;
-            }
-        };
-    }*/
-
-    
-
-    componentDidUpdate(){
-        if(this.state.postingData){
+    componentDidUpdate() {
+        if (this.state.postingData) {
             this.postData();
         }
     }
 
     componentDidMount() {
-        if (this.state.arrivalLatitude !== '') {
-            this.addMarkers();
+        const id = this.props.match.params.id;
+        if (id !== "create") {
+            axios.get("https://coffeecar.herokuapp.com/api/announces/" + id)
+                .then(response => {
+                    const passengers = response.passengers ? response.passengers : [];
+                    this.setState({
+                        id: response.data.id,
+                        title: response.data.title,
+                        departureTime: response.data.departureTime,
+                        arrivalDate: response.data.arrivalDate,
+                        arrivalLatitude: response.data.arrivalLatitude,
+                        arrivalLongitude: response.data.arrivalLongitude,
+                        departureLatitude: response.data.departureLatitude,
+                        departureLongitude: response.data.departureLongitude,
+                        availableSeats: response.data.seats - passengers.length,
+                        description: response.data.description,
+                        imgLink: response.data.imgLink,
+                        seats: response.data.seats,
+                        driver: response.data.driver,
+                        passengers: passengers,
+                        writable: response.data.driver.id === JSON.parse(sessionStorage.user).id,
+                        posted: true,
+                        joined: passengers.find(element => element.id === JSON.parse(sessionStorage.user).id)
+                    });
+                    this.addMarkers();
+                });
+        } else {
+            this.setState({
+                driver: JSON.parse(sessionStorage.user),
+            })
         }
     }
 
@@ -200,7 +195,7 @@ class TripRoot extends React.Component {
         this.setState(prevState => ({
             passengers: newPassengers,
             availableSeats: prevState.availableSeats - 1,
-            postingData: !prevState.postingData 
+            postingData: !prevState.postingData
         }));
     }
 
@@ -210,19 +205,19 @@ class TripRoot extends React.Component {
         this.setState(prevState => ({
             passengers: newPassengers,
             availableSeats: prevState.availableSeats + 1,
-            postingData: !prevState.postingData 
+            postingData: !prevState.postingData
         }));
     }
 
     handleSubmit = e => {
         e.preventDefault();
-        this.setState(prevState=>({postingData:!prevState.postingData}))
+        this.setState(prevState => ({ postingData: !prevState.postingData }))
     }
 
     postData = () => {
         if (this.state.arrivalLatitude === '' || this.state.departureLatitude === '') {
             alert("Selecciona el lugar de origen y destino");
-            this.setState(prevState=>({postingData:!prevState.postingData}))
+            this.setState(prevState => ({ postingData: !prevState.postingData }))
         } else {
             const body = {
                 title: this.state.title,
@@ -248,8 +243,10 @@ class TripRoot extends React.Component {
                 },
                 body: JSON.stringify(body)
             })
-                .then(response => {                
-                    this.setState(prevState => ({                        
+                .then(response => response.json())
+                .then(data => {
+                    this.setState(prevState => ({
+                        id: data.id,
                         posted: true,
                         postingData: !prevState.postingData,
                         buttonLabel: "¡Listo! ¿Quieres cambiar algo?",
@@ -260,15 +257,31 @@ class TripRoot extends React.Component {
         }
     }
 
-    delete = () =>{
-        axios.delete("https://coffeecar.herokuapp.com/api/announces/" + this.state.id);
-        return <Redirect to="/home"/>
+    delete = () => {
+        this.setState(prevState => ({
+            deleting: !prevState.deleting,
+        }));
+        axios.delete("https://coffeecar.herokuapp.com/api/announces/" + this.state.id)
+            .then(() => {
+                alert('¡Listo!');
+                this.props.history.push(`/home`);
+            }
+            );
     }
 
     render() {
-        const deleteButton = this.state.writable && this.state.id!==0 
-            ?   <Button onClick={this.delete} variant = "danger">Eliminar anuncio</Button>
-            :   null;
+        const deleteButton = this.state.writable && this.state.id !== 0
+            ? this.state.deleting ?
+                <Button variant="danger" disabled>
+                    <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                    />
+                </Button> : <Button onClick={this.delete} variant="danger">Eliminar anuncio</Button>
+            : null;
         const submitButton = this.state.writable ?
             this.state.postingData ? <Button variant="dark" disabled>
                 <Spinner
@@ -328,21 +341,21 @@ class TripRoot extends React.Component {
             this.state.postingImg ? null : <Button variant="dark" onClick={this.handleModal}>Ver coche</Button>
             : null;
 
-            const announce = {
-                title: this.state.title,
-                seats: this.state.seats,
-                departureTime: this.state.departureTime,
-                arrivalDate: this.state.arrivalDate,
-                arrivalLatitude: this.state.arrivalLatitude,
-                arrivalLongitude: this.state.arrivalLongitude,
-                departureLatitude: this.state.departureLatitude,
-                departureLongitude: this.state.departureLongitude,
-                description: this.state.description,
-                imgLink: this.state.imgLink,
-                driver: this.state.driver,
-                passengers: this.state.passengers,
-                id: this.state.id
-            }            
+        const announce = {
+            title: this.state.title,
+            seats: this.state.seats,
+            departureTime: this.state.departureTime,
+            arrivalDate: this.state.arrivalDate,
+            arrivalLatitude: this.state.arrivalLatitude,
+            arrivalLongitude: this.state.arrivalLongitude,
+            departureLatitude: this.state.departureLatitude,
+            departureLongitude: this.state.departureLongitude,
+            description: this.state.description,
+            imgLink: this.state.imgLink,
+            driver: this.state.driver,
+            passengers: this.state.passengers,
+            id: this.state.id
+        }
         return (
             <Container>
                 <Modal show={this.state.showImg} size="md"
@@ -351,7 +364,7 @@ class TripRoot extends React.Component {
                 </Modal>
                 <Card style={{ width: '75%', margin: 'auto', marginTop: '50px', boxShadow: "5px 5px 5px grey" }}>
                     <Card.Body>
-                        <Card.Title>{this.props.item ? 'Información del viaje' : '¡Publica tu viaje ahora!'}</Card.Title>
+                        <Card.Title>{this.response ? 'Información del viaje' : '¡Publica tu viaje ahora!'}</Card.Title>
                         <Card.Subtitle className="mb-2 text-muted">Que no se te olviden las llaves :P</Card.Subtitle>
                         <Form onSubmit={this.handleSubmit}>
                             <Row>
@@ -458,7 +471,7 @@ class TripRoot extends React.Component {
                         </Form>
                     </Card.Body>
                 </Card >
-                {this.state.id===0 ? null : <Comments announce={announce}/>}
+                {this.state.id === 0 ? null : <Comments announce={announce} />}
             </Container>
         );
     }
