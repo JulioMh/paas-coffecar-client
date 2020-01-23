@@ -26,6 +26,7 @@ class App extends Component {
     const trips=this.state.logged ? Trip: null;
     const home=this.state.logged ? Home: null;    
     return (
+
       <BrowserRouter>
         <div>
           <header>
@@ -33,7 +34,7 @@ class App extends Component {
           </header>
           <Switch>
             <Route path="/home" component={home} exact />          
-            <Route path="/trip" component={trips} exact/>
+            <Route path="/trip/:id" component={trips} exact/>
             <Route exact path="/">
               {this.state.logged ? <Redirect to="/home" /> : <Welcome logged={this.logged} />}
             </Route>
@@ -41,6 +42,7 @@ class App extends Component {
           </Switch>
         </div>
       </BrowserRouter>
+
     );
   }
 };

@@ -8,6 +8,7 @@ import axios from '../../axios-orders';
 const welcome = (props) => {
 
     const signup = (res) => {
+
         let postData;
         if (res.w3.U3) {
             postData = {
@@ -15,6 +16,7 @@ const welcome = (props) => {
                 email: res.w3.U3,
             };
         }
+
         if (postData) {
             axios.get("users/search/findByEmail?email=" + postData.email)
                 .then((response) => {
@@ -60,3 +62,4 @@ const welcome = (props) => {
 }
 
 export default welcome;
+
