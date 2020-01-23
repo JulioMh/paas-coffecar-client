@@ -2,11 +2,17 @@
 import React, { Component } from "react";
 import { TabView, TabPanel } from "primereact/tabview";
 import Trips from "../../components/Trips/Trips";
-import { Redirect } from "react-router-dom";
+import { BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useRouteMatch,
+  useParams
+ } from "react-router-dom";
 import Welcome from "../Welcome/Welcome";
 import Trip from '../TripRoot/TripRoot';
 
-import "../../components/Trips/Trips.module.css";
+//import "../../components/Trips/Trips.module.css";
 
 
 class Home extends Component {
@@ -54,11 +60,15 @@ class Home extends Component {
           y
           justify-content="center">
           <TabView renderActiveOnly={true} style={{align: 'center', margin: 'auto'}} >
-            <TabPanel header="Trips available" leftIcon="pi pi-home">
-              <Trips trips={this.state.tripsAvailable}></Trips>
+            <TabPanel header="Trips available" leftIcon="pi pi-home"> 
+              <Trips 
+              trips={this.state.tripsAvailable} 
+              redirectToTrip={(tripId) => this.props.history.push(`/trip/${tripId}`)}></Trips>
             </TabPanel>
             <TabPanel header="My Trips" leftIcon="pi pi-user">
-              <Trips trips={this.state.myTrips}></Trips>
+              <Trips 
+              trips={this.state.myTrips}
+              redirectToTrip={(tripId) => this.props.history.push(`/trip/${tripId}`)}></Trips>
             </TabPanel>
           </TabView>
         </div>

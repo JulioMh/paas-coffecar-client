@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { Carousel } from "primereact/carousel";
 import { Button } from "primereact/button";
-import "./Trips.module.css";
-import { Card } from "primereact/card";
-import { Redirect } from "react-router-dom";
-import { useHistory } from 'react-router-dom'
+//import "./Trips.module.css";
+import Card from 'react-bootstrap/Card';
+import { matchPath, match, Redirect } from "react-router";
+
 
 export class Trips extends Component {
   
@@ -12,7 +12,8 @@ export class Trips extends Component {
     super();
     this.state = {
       trips: [],
-      history: useHistory()
+      
+     
     };
     this.carTemplate = this.carTemplate.bind(this);
 
@@ -42,20 +43,15 @@ export class Trips extends Component {
   }  
   
 
-  encaminar = (trip) => {
-  "funcionAPICALL"
-       .then(response => {
-             if (response.status >= 200 && response.status < 300) {
-                 this.state.history.push({
-                   pathname: '/trip',
-                   state: {item : trip}})
-                 }});
+ guardarId = (trip) => {
+    this.props.redirectToTrip(trip.id);
   }
 
     
 
   carTemplate(trip) {
     return (
+
       <div className="car-details">
         <div
           className="p-grid p-nogutter"
@@ -81,10 +77,12 @@ export class Trips extends Component {
             </div>
             <div className="content-section implementation">
               <Card
-                title="Description"
-                style={{ width: "360px", margin: "auto", marginTop: "50px" }}
+                style={{ width: "360px", margin: "auto", marginTop: "50px", boxShadow: "5px 5px 5px grey" }}
               >
-                <div>{trip.description}</div>
+                <Card.Body>
+                  <Card.Title>Descripcion</Card.Title>
+                  {trip.description}
+                </Card.Body>
               </Card>
             </div>
             <div className="car-buttons">
@@ -92,7 +90,7 @@ export class Trips extends Component {
               <Button
                 label="Details"
                 className="p-button-rounded"
-                onClick={this.encaminar({trip})}
+               onClick={this.guardarId(trip)}
               />
             </div>
           </div>
@@ -103,7 +101,7 @@ export class Trips extends Component {
 
   render() {
     const verticalHeader = <h2>{this.props.name}</h2>;
-
+    
     return (
       <div className="carousel-demo">
         <div className="content-section implementation">
@@ -113,9 +111,11 @@ export class Trips extends Component {
             orientation="vertical"
             style={{
               width: "75%",
+              heigth: "100%",
               margin: "auto",
               marginTop: "50px",
-              boxShadow: "5px 5px 5px grey"
+              textAlign: "center",
+              alignContent: "center"
             }}
             numVisible={1}
             numScroll={1}

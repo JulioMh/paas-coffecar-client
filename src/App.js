@@ -34,7 +34,7 @@ class App extends Component {
           </header>
           <Switch>
             <Route path="/home" component={home} exact />          
-            <Route path="/trip" component={trips} exact/>
+            <Route path="/trip/:id" component={trips} exact/>
             <Route exact path="/">
               {this.state.logged ? <Redirect to="/home" /> : <Welcome logged={this.logged} />}
             </Route>
