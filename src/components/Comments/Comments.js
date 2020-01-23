@@ -58,8 +58,7 @@ class Comments extends React.Component {
         }
     }
 
-    render() {
-        console.log("render")
+    render() {    
         const comments = this.state.comments;
         return (
             <Card style={{ width: '75%', margin: 'auto', marginTop: '20px', boxShadow: "5px 5px 5px grey" }}>

@@ -3,6 +3,7 @@ import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Label from 'react-bootstrap/FormLabel';
 import Input from 'react-bootstrap/FormControl';
+import {Redirect} from 'react-router-dom';
 import FormGroup from 'react-bootstrap/FormGroup';
 import { FileUpload } from 'primereact/fileupload';
 import Spinner from 'react-bootstrap/Spinner';
@@ -47,7 +48,7 @@ class TripRoot extends React.Component {
         joined: null,
     }
 
-    static getDerivedStateFromProps(props, state) {
+    /*static getDerivedStateFromProps(props, state) {
         if (props.item && state.id === 0) {
             const passengers = props.item.passengers ? props.item.passengers : [];
             return ({
@@ -76,7 +77,9 @@ class TripRoot extends React.Component {
                 return state;
             }
         };
-    }
+    }*/
+
+    
 
     componentDidUpdate(){
         if(this.state.postingData){
@@ -245,8 +248,8 @@ class TripRoot extends React.Component {
                 },
                 body: JSON.stringify(body)
             })
-                .then(response => {
-                    this.setState(prevState => ({
+                .then(response => {                
+                    this.setState(prevState => ({                        
                         posted: true,
                         postingData: !prevState.postingData,
                         buttonLabel: "¡Listo! ¿Quieres cambiar algo?",
@@ -257,7 +260,15 @@ class TripRoot extends React.Component {
         }
     }
 
+    delete = () =>{
+        axios.delete("https://coffeecar.herokuapp.com/api/announces/" + this.state.id);
+        return <Redirect to="/home"/>
+    }
+
     render() {
+        const deleteButton = this.state.writable && this.state.id!==0 
+            ?   <Button onClick={this.delete} variant = "danger">Eliminar anuncio</Button>
+            :   null;
         const submitButton = this.state.writable ?
             this.state.postingData ? <Button variant="dark" disabled>
                 <Spinner
@@ -439,6 +450,9 @@ class TripRoot extends React.Component {
                             <Row className="justify-content-md-center">
                                 <Col md="auto">
                                     {submitButton}
+                                </Col>
+                                <Col md="auto">
+                                    {deleteButton}
                                 </Col>
                             </Row>
                         </Form>
