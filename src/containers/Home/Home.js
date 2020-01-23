@@ -2,6 +2,9 @@
 import React, { Component } from "react";
 import { TabView, TabPanel } from "primereact/tabview";
 import Trips from "../../components/Trips/Trips";
+import ReactWeather from 'react-open-weather';
+import 'react-open-weather/lib/css/ReactWeather.css';
+import { Image, Card } from 'react-bootstrap';
 
 class Home extends Component {
     constructor() {
@@ -30,14 +33,12 @@ class Home extends Component {
             .then(tripsAvailable => {
                 this.setState({ tripsAvailable });
             });
-    }    
+    }
 
     render() {
         return (
             <div>
-                <div className="content-section implementation" aling-items="center"
-                    y
-                    justify-content="center">
+                <div className="content-section implementation" aling-items="center" justify-content="center">
                     <TabView renderActiveOnly={true} style={{ align: 'center', margin: 'auto' }} >
                         <TabPanel header="Trips available" leftIcon="pi pi-home">
                             <Trips
@@ -49,11 +50,22 @@ class Home extends Component {
                                 trips={this.state.myTrips}
                                 redirectToTrip={(tripId) => this.props.history.push(`/trip/${tripId}`)}></Trips>
                         </TabPanel>
+                        <TabPanel header="Tiempo actual">
+                            <Card style={{ width: '75%', margin: 'auto', marginTop: '50px', marginBottom: '50px', boxShadow: "5px 5px 5px grey" }}>
+                                <Card.Body>
+                                <ReactWeather
+                                    forecast="today"
+                                    apikey="14e9287d01828d9cc8128840206f9dc0"
+                                    type="city"
+                                    city="Malaga, ES" />
+                                </Card.Body>
+                            </Card >
+                        </TabPanel>
                     </TabView>
                 </div>
             </div>
         );
-        }
+    }
 }
 
 export default Home;
