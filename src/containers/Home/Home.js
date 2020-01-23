@@ -50,7 +50,7 @@ class Home extends Component {
                                 trips={this.state.myTrips}
                                 redirectToTrip={(tripId) => this.props.history.push(`/trip/${tripId}`)}></Trips>
                         </TabPanel>
-                        <TabPanel header="Tiempo actual">
+                        <TabPanel header="Tiempo actual" leftIcon="pi pi-cloud">
                             <Card style={{ width: '75%', margin: 'auto', marginTop: '50px', marginBottom: '50px', boxShadow: "5px 5px 5px grey" }}>
                                 <Card.Body>
                                 <ReactWeather
