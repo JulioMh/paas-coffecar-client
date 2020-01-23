@@ -1,19 +1,17 @@
 import React, { Component } from "react";
 import { Carousel } from "primereact/carousel";
 import { Button } from "primereact/button";
-//import "./Trips.module.css";
 import Card from 'react-bootstrap/Card';
-import { matchPath, match, Redirect } from "react-router";
 
 
 export class Trips extends Component {
-  
+
   constructor() {
     super();
     this.state = {
       trips: [],
-      
-     
+
+
     };
     this.carTemplate = this.carTemplate.bind(this);
 
@@ -36,18 +34,18 @@ export class Trips extends Component {
     ];
   }
 
-  static getDerivedStateFromProps(props,state){
+  static getDerivedStateFromProps(props, state) {
     return ({
       trips: props.trips
     })
-  }  
-  
+  }
 
- guardarId = (trip) => {
+
+  saveId = (trip) => {
     this.props.redirectToTrip(trip.id);
   }
 
-    
+
 
   carTemplate(trip) {
     return (
@@ -90,7 +88,7 @@ export class Trips extends Component {
               <Button
                 label="Details"
                 className="p-button-rounded"
-               onClick={this.guardarId(trip)}
+                onClick={() => this.saveId(trip)}
               />
             </div>
           </div>
@@ -101,7 +99,7 @@ export class Trips extends Component {
 
   render() {
     const verticalHeader = <h2>{this.props.name}</h2>;
-    
+
     return (
       <div className="carousel-demo">
         <div className="content-section implementation">
