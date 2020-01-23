@@ -11,8 +11,8 @@ class Home extends Component {
         super();
         this.state = {
             tripsAvailable: [],
-            myTrips: []
-
+            myTrips: [],
+            userPosition: null
         };
     }
 
@@ -33,9 +33,15 @@ class Home extends Component {
             .then(tripsAvailable => {
                 this.setState({ tripsAvailable });
             });
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition( (position) =>{
+                this.setState({ userPosition: position });
+            });
+        }
     }
 
-    render() {
+    render() {        
         return (
             <div>
                 <div className="content-section implementation" aling-items="center" justify-content="center">
@@ -53,17 +59,18 @@ class Home extends Component {
                         <TabPanel header="Tiempo actual">
                             <Card style={{ width: '75%', margin: 'auto', marginTop: '50px', marginBottom: '50px', boxShadow: "5px 5px 5px grey" }}>
                                 <Card.Body>
-                                <ReactWeather
-                                    forecast="today"
-                                    apikey="14e9287d01828d9cc8128840206f9dc0"
-                                    type="city"
-                                    city="Malaga, ES" />
+                                    <ReactWeather
+                                        forecast="today"
+                                        apikey="14e9287d01828d9cc8128840206f9dc0"
+                                        type="geo"
+                                        lat={this.state.userPosition ? this.state.userPosition.coords.latitude: ''}
+                                        lon={this.state.userPosition ? this.state.userPosition.coords.longitude: ''} />
                                 </Card.Body>
                             </Card >
                         </TabPanel>
                     </TabView>
                 </div>
-            </div>
+            </div >
         );
     }
 }
