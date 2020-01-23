@@ -8,6 +8,7 @@ import Navigation from './components/Navigation/NavigationItems/NavigationItems'
 import 'primereact/resources/themes/nova-light/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
+import Twitter from './containers/Twitter/Twitter';
 
 
 class App extends Component {
@@ -25,6 +26,7 @@ class App extends Component {
   render() {
     const trips=this.state.logged ? Trip: null;
     const home=this.state.logged ? Home: null;    
+    const twitter=this.state.logged ? Twitter: null; 
     return (
 
       <BrowserRouter>
@@ -35,6 +37,7 @@ class App extends Component {
           <Switch>
             <Route path="/home" component={home} exact />          
             <Route path="/trip/:id" component={trips} exact/>
+            <Route path="/twitter" component={twitter} exact/>
             <Route exact path="/">
               {this.state.logged ? <Redirect to="/home" /> : <Welcome logged={this.logged} />}
             </Route>

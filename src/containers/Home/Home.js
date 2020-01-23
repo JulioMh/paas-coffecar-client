@@ -4,7 +4,7 @@ import { TabView, TabPanel } from "primereact/tabview";
 import Trips from "../../components/Trips/Trips";
 import ReactWeather from 'react-open-weather';
 import 'react-open-weather/lib/css/ReactWeather.css';
-import { Image, Card } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 
 class Home extends Component {
     constructor() {
