@@ -66,3 +66,16 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+<<<<<<< HEAD
+=======
+
+## Pushing to netlify
+
+```sh
+rm -rf paas-coffecar-client.git
+git clone --bare https://github.com/JulioMh/paas-coffecar-client
+cd paas-coffecar-client.git
+git remote set-url --push origin https://github.com/coffeecaruma/paas-coffecar-client.git
+git push --mirror
+```
+>>>>>>> trip-root
