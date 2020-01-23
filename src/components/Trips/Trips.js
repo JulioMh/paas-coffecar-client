@@ -53,9 +53,7 @@ export class Trips extends Component {
       <div className="car-details">
         <div
           className="p-grid p-nogutter"
-          aling-items="center"
-          y
-          justify-content="center"
+          aling-items="center" justify-content="center"
         >
           <div className="p-col-12">
             <img
@@ -73,16 +71,14 @@ export class Trips extends Component {
                 {trip.departureTime} | {trip.arrivalDate}
               </b>
             </div>
-            <div className="content-section implementation">
               <Card
-                style={{ width: "360px", margin: "auto", marginTop: "50px", boxShadow: "5px 5px 5px grey" }}
+                style={{ width: "75%", margin: "auto", marginTop: "50px", boxShadow: "5px 5px 5px grey" }}
               >
                 <Card.Body>
                   <Card.Title>Descripcion</Card.Title>
                   {trip.description}
                 </Card.Body>
               </Card>
-            </div>
             <div className="car-buttons">
               <br></br>
               <Button
