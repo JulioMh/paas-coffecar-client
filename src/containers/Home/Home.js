@@ -19,14 +19,14 @@ class Home extends Component {
     componentDidMount() {
         let id = sessionStorage.user;
         console.log(id)
-        fetch("http://coffeecar.herokuapp.com/api/announces/search/findByDriverId?id=" + JSON.parse(sessionStorage.user).id)
+        fetch("https://coffeecar.herokuapp.com/api/announces/search/findByDriverId?id=" + JSON.parse(sessionStorage.user).id)
             .then(response => {
                 return response.json();
             })
             .then(myTrips => {
                 this.setState({ myTrips });
             });
-        fetch("http://coffeecar.herokuapp.com/api/announces/search/findByDriverIdNot?id=" + JSON.parse(sessionStorage.user).id)
+        fetch("https://coffeecar.herokuapp.com/api/announces/search/findByDriverIdNot?id=" + JSON.parse(sessionStorage.user).id)
             .then(response => {
                 return response.json();
             })

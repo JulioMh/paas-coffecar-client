@@ -8,8 +8,6 @@ import axios from '../../axios-orders';
 const welcome = (props) => {
 
     const signup = (res) => {
-        console.log("signup");
-        console.log(res)
         let postData;
         if (res.w3.U3) {
             postData = {
@@ -41,8 +39,6 @@ const welcome = (props) => {
     }
 
     const responseGoogle = (response) => {
-        console.log("responseGoogle");
-        console.log(response);
         signup(response);
     }
 
