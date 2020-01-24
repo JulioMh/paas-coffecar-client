@@ -115,18 +115,20 @@ class TripRoot extends React.Component {
     handleModal = () => { this.setState(prevState => ({ showImg: !prevState.showImg })) }
 
     onMapClick = e => {
-        if (this.state.departureLatitude && !this.state.arrivalLatitude) {
-            this.setState({
-                arrivalLatitude: e.latLng.lat(),
-                arrivalLongitude: e.latLng.lng(),
-            });
-        } else if (!this.state.arrivalLatitude) {
-            this.setState({
-                departureLatitude: e.latLng.lat(),
-                departureLongitude: e.latLng.lng()
-            });
+        if (this.state.writable) {
+            if (this.state.departureLatitude && !this.state.arrivalLatitude) {
+                this.setState({
+                    arrivalLatitude: e.latLng.lat(),
+                    arrivalLongitude: e.latLng.lng(),
+                });
+            } else if (!this.state.arrivalLatitude) {
+                this.setState({
+                    departureLatitude: e.latLng.lat(),
+                    departureLongitude: e.latLng.lng()
+                })
+            }
+            this.addMarkers();
         }
-        this.addMarkers();
     }
 
     onOverlayDragEnd = e => {

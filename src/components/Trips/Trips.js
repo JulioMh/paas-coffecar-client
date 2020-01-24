@@ -82,7 +82,7 @@ export class Trips extends Component {
                 variant="dark"
                 onClick={() => this.saveId(trip)}>
                   Ver mas detalles
-                </Button>
+              </Button>
             </div>
           </div>
         </div>
