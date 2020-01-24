@@ -53,7 +53,7 @@ const welcome = (props) => {
                     <h1>¡Bienvenido a CoffeeCar!</h1>
                     <Image src={CoffeeCarLogo} className={classes.imgLogo} />
                     <GoogleLogin
-                        clientId="614940743476-2hc47higdlfhia4v8d6o4tstjpuc5kd0.apps.googleusercontent.com"
+                        clientId="171691482972-t86ek8jvfcgcvaebv7ja5d32t3rl58fa.apps.googleusercontent.com"
                         buttonText="Login con Google"
                         theme="dark"
                         onSuccess={responseGoogle}
