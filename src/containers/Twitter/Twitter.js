@@ -64,7 +64,7 @@ const twitter = () => {
                     <Card style={{ width: '100%', margin: 'auto', marginTop: '50px', boxShadow: "5px 5px 5px grey" }}>
                         <Card.Body>
                             <Tweet
-                                tweetId='1219318027595997194'
+                                tweetId='1220658614685388800'
                             />
                         </Card.Body>
                     </Card>
