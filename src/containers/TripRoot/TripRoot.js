@@ -59,7 +59,7 @@ class TripRoot extends React.Component {
         if (id !== "create") {
             axios.get("https://coffeecar.herokuapp.com/api/announces/" + id)
                 .then(response => {
-                    const passengers = response.passengers ? response.passengers : [];
+                    const passengers = response.data.passengers ? response.data.passengers : [];
                     this.setState({
                         id: response.data.id,
                         title: response.data.title,
@@ -309,7 +309,7 @@ class TripRoot extends React.Component {
                     />
                 </Button> :
                 <Button variant="danger" onClick={this.handleUnjoin}>¿Dejar el viaje?</Button>
-            : this.state.postingData ?
+            : this.state.availableSeats > 0 ? this.state.postingData ?
                 <Button variant="success" disabled>
                     <Spinner
                         as="span"
@@ -319,7 +319,8 @@ class TripRoot extends React.Component {
                         aria-hidden="true"
                     />
                 </Button> :
-                <Button variant="success" onClick={this.handleJoin}>¡Unete al viaje!</Button>;
+                <Button variant="success" onClick={this.handleJoin}>¡Unete al viaje!</Button>
+                : null;
 
         const uploader = this.state.postingImg ?
             <Button variant="dark" disabled>
@@ -404,7 +405,7 @@ class TripRoot extends React.Component {
                                                     value={this.state.seats === null ? '' : this.state.seats} />
                                             </FormGroup> : null}
                                         <FormGroup as={Col}>
-                                            {this.state.writable ? null : joinButton}
+                                            {this.state.writable? null : joinButton}
                                         </FormGroup>
                                     </Form.Row>
                                     <Form.Row>
